@@ -1,6 +1,4 @@
-﻿h2(#readme). 
-
-!http://pic3.178.com/918/9184677/month_1209/2e67269f5b2710172be08f534772493c.png!
+﻿!http://pic3.178.com/918/9184677/month_1209/2e67269f5b2710172be08f534772493c.png!
 
 h2. icrowUI
 
