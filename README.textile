@@ -1,9 +1,23 @@
-﻿!http://pic3.178.com/918/9184677/month_1209/2e67269f5b2710172be08f534772493c.png!
+﻿!http://b.hiphotos.baidu.com/album/s%3D1600%3Bq%3D90/sign=da22fcd8034f78f0840b9ef549013124/4a36acaf2edda3cc5d16daac01e93901203f924f.jpg!
 
 h2. icrowUI
 
 h4. for World of Warcraft (5.0.5)
 
-p. "NGA发布帖":http://bbs.ngacn.cc/read.php?tid=5580467&_ff=200
+h3. 说明
 
-p. 此为icrowUI的主插件包. 请删除World of Warcraft\Interface\AddOns文件夹, 然后将下载并解压出的AddOns文件夹放到World of Warcraft\Interface文件夹中.
+* "NGA发布帖":http://bbs.ngacn.cc/read.php?tid=5580467&_ff=200
+
+h3. 下载
+
+* "主插件包":https://github.com/icrowzhang/icrowUI/zipball/master
+
+* "必备字体包":https://github.com/downloads/icrowzhang/icrowUI/Fonts.rar
+
+* "可选字体包(国服)":https://github.com/downloads/icrowzhang/icrowUI/FontsCN.rar
+
+* "可选字体包(台服)":https://github.com/downloads/icrowzhang/icrowUI/FontsTW.rar
+
+* "材质包":https://github.com/downloads/icrowzhang/icrowUI/Interface.rar
+
+* "Clean Icons - Thin 图标包":https://github.com/downloads/icrowzhang/icrowUI/ICONS.rar
