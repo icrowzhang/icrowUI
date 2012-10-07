@@ -1,0 +1,11 @@
+﻿## Interface: 50001
+## Title: oGlow
+## Title-zhCN: |cFF71D5FF美化 -|r 物品边框着色
+## Title-zhTW: |cFF71D5FF美化 -|r 物品邊框著色
+## Author: Haste
+## X-eMail: troeks@gmail.com
+## Notes: Make your shiny items... glow in the dark!
+## Notes-zhCN: 根据物品品质, 对图标边框进行着色
+## Notes-zhTW: 根據物品品質, 對圖標邊框進行著色
+
+oGlow.lua

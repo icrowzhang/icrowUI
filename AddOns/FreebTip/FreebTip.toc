@@ -1,0 +1,14 @@
+﻿## Interface: 50001
+## Title: FreebTip
+## Title-zhCN: |cFF71D5FF美化 -|r 鼠标提示
+## Title-zhTW: |cFF71D5FF美化 -|r 滑鼠提示
+## Notes: Custom Game Tooltip
+## Notes-zhCN: 鼠标指示框美化插件
+## Notes-zhTW: 滑鼠指示框美化插件
+## Version: 1.6
+## Author: Freebaser
+## RequiredDeps: !icrowMedia
+
+tip.lua
+talent.lua
+ilevel.lua

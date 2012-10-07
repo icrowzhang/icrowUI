@@ -1,0 +1,13 @@
+﻿## Interface: 50001
+## Title: Aurora
+## Title-zhCN: |cFF71D5FF美化 -|r 全局
+## Title-zhTW: |cFF71D5FF美化 -|r 全局
+## Notes: Minimalistic window theme.
+## Notes-zhCN: 全局美化插件
+## Notes-zhTW: 全局美化插件
+## Author: Haleth/Freethinker
+## Version: 5.0.4
+## SavedVariables: AuroraConfig
+
+aurora.lua
+gui.lua

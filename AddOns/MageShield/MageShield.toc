@@ -1,0 +1,12 @@
+﻿## Interface: 50001
+## Author: Icrow
+## Title: |cFF71D5FF[Mage]|r MageShield
+## Title-zhCN: |cFF71D5FF[法师]|r 护盾监视
+## Title-zhTW: |cFF71D5FF[法師]|r 護盾監視
+## Notes: Tracks the remaining time and absorption value of Ice Barrier and Incanter's Ward.
+## Notes-zhCN: 法师的护盾技能持续时间及吸收量监控插件
+## Notes-zhTW: 法師的護盾技能持續時間及吸收量監控插件
+## SavedVariables: MageShieldDB
+## RequiredDeps: !icrowMedia
+
+MageShield.lua

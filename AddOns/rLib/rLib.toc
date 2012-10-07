@@ -1,0 +1,13 @@
+﻿## Interface: 50001
+## Author: zork
+## Title: rLib
+## Title-zhCN: |cFFC3C3C3动作条|r 基本库
+## Title-zhTW: |cFFC3C3C3動作條|r 基本庫
+## Notes: Library for rAddons
+## Notes-zhCN: rActionBarStyler的必备组件
+## Notes-zhTW: rActionBarStyler的必備組件
+## RequiredDeps: !icrowMedia
+
+core\dragframe.lua
+core\slashcmd.lua
+core\fader.lua

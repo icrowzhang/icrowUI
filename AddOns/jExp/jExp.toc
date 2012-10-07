@@ -1,0 +1,12 @@
+﻿## Interface: 50001
+## Author: jin
+## Title: jExp
+## Title-zhCN: |cFF71D5FF美化 -|r 经验条
+## Title-zhTW: |cFF71D5FF美化 -|r 經驗條
+## Notes: oUF_D3Orb (by roth) styled XP- and RepBar
+## Notes-zhCN: 小巧美观的经验/声望条
+## Notes-zhTW: 小巧美觀的經驗/聲望條
+## X-Category: Misc
+## RequiredDeps: !icrowMedia
+
+jExp.lua

@@ -1,0 +1,11 @@
+﻿## Interface: 50001
+## Title: Doom_CooldownPulse
+## Title-zhCN: 冷却完成提示
+## Title-zhTW: 冷卻完成提示
+## Notes: Flash an ability's icon in the middle of the screen when it comes off cooldown.
+## Notes-zhCN: 当技能冷却完成时，在屏幕中央闪烁该技能的图标
+## Notes-zhTW: 當技能冷卻完成時，在屏幕中央閃爍該技能的圖標
+## Author: Woffle of Dark Iron[US]
+## SavedVariables: DCP_Saved
+
+Doom_CooldownPulse.lua

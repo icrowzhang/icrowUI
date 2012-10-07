@@ -1,0 +1,12 @@
+﻿## Interface: 50001
+## Title: BagSync
+## Title-zhCN: 物品记录
+## Title-zhTW: 物品記錄
+## Notes: BagSync tracks your characters items and displays it within tooltips.
+## Notes-zhCN: 背包及银行物品数量统计插件
+## Notes-zhTW: 背包及銀行物品數量統計插件
+## Author: Xruptor
+## Version: 6.7.3
+## SavedVariables: BagSyncDB
+
+BagSync.lua
