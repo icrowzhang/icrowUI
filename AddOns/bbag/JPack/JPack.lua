@@ -1,5 +1,6 @@
 local DEV_MOD = false
 local debug = function() end
+local L = JPackLocale
 
 --[===[@debug@
 local debugf = tekDebug and tekDebug:GetFrame("JPack")--tekDebug
