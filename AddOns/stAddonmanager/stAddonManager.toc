@@ -1,0 +1,14 @@
+﻿## Interface: 50001
+## Author: Safturento
+## Version: v1.3.2-712c7c1
+## Title: |cff00aaffst|rAddonManager
+## Title-zhCN: 插件管理
+## Title-zhTW: 插件管理
+## RequiredDeps: Aurora
+## Notes: A simple and minimalistic addon to disable/enabled addons without logging out.
+## Notes-zhCN: 使你无需登出角色即可启用/禁用插件
+## Notes-zhTW: 使你無需登出角色即可啟用/禁用插件
+## SavedVariables: stAddonProfiles, stLockedAddons
+
+localization.lua
+stAddonManager.lua

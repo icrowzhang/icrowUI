@@ -1,0 +1,21 @@
+﻿## Interface: 50001
+## Title: |cff3399FFQQ|rChat
+## Title-zhCN: |cFF71D5FF美化 -|r 聊天框
+## Title-zhTW: |cFF71D5FF美化 -|r 訊息視窗
+## Author: |cff3399FF浅浅|r
+## Notes: A compilation of useful chat modification.
+## Notes-zhCN: 聊天框增强及美化插件
+## Notes-zhTW: 訊息視窗增強及美化插件
+## RequiredDeps: !icrowMedia
+## SavedVariables: QQChatDB
+## Version: 3.37.4
+
+QQChat.lua
+buttons.lua
+channel.lua
+ChatFilter.lua
+GlobalStrings.lua
+Spamagemeters.lua
+StatReport.lua
+ChatEmote.lua
+chatbar.lua

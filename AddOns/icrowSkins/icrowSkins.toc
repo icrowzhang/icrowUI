@@ -1,0 +1,11 @@
+﻿## Interface: 50001
+## Title: |cFF71D5FFicrow|rSkins
+## Title-zhCN: |cFF71D5FF美化 -|r 插件皮肤
+## Title-zhTW: |cFF71D5FF美化 -|r 插件皮膚
+## Notes: Customize skin for some popular addons(e.g. DBM).
+## Notes-zhCN: 某些知名插件(例如DBM)的美化皮肤
+## Notes-zhTW: 某些知名插件(例如DBM)的美化皮膚
+## Author: icrow
+## RequiredDeps: !icrowMedia
+
+DBM.lua

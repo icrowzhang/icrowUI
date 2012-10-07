@@ -1,0 +1,15 @@
+﻿## Interface: 50001
+## Author: Allez
+## Title: |cff777777al|rDamageMeter
+## Title-zhCN: 伤害统计
+## Title-zhTW: 傷害統計
+## Version: 50001.11
+## Notes: Damage meter
+## Notes-zhCN: 轻量级的伤害统计插件
+## Notes-zhTW: 輕量級的傷害統計插件
+## OptionalDeps: alInterface
+## RequiredDeps: !icrowMedia, !UIDropDownMenuFix
+## SavedVariables: dmconf
+
+embeds.xml
+alDamageMeter.lua

@@ -1,0 +1,25 @@
+﻿## Interface: 50001
+## Author: Loshine
+## Credits-to: Tukz, Katae
+## Title: |cff777777dim|rinfo
+## Title-zhCN: |cFF71D5FF美化 -|r 信息条
+## Title-zhTW: |cFF71D5FF美化 -|r 信息條
+## Notes: Info Text
+## Notes-zhCN: 简洁美观的信息条插件
+## Notes-zhTW: 簡潔美觀的信息條插件
+## Version: v1.3.9
+## SavedVariables: diminfo
+
+cfg.lua
+init.lua
+
+locale\english.lua
+locale\chinese.lua
+locale\taiwan.lua
+
+modules\Bags.lua
+modules\Friends.lua
+modules\Gold.lua
+modules\Guild.lua
+modules\Memory.lua
+modules\System.lua

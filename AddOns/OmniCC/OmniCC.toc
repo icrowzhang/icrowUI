@@ -1,0 +1,10 @@
+﻿## Interface: 50001
+## Title: OmniCC
+## Title-zhCN: 技能冷却数字
+## Title-zhTW: 技能冷卻數字
+## Notes: Show cooldown numbers on your action bar and many other places.
+## Notes-zhCN: 在你的动作条上显示冷却数字(其实只要是有冷却动画的地方都可以!)
+## Notes-zhTW: 在你的動作條上顯示冷卻數字(其實只要是有冷卻動畫的地方都可以!)
+## Author: Tuller
+
+OmniCC.lua

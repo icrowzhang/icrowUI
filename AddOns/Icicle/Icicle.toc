@@ -1,0 +1,12 @@
+## Interface: 50001
+## Title: |cffee0000[PVP]|r Icicle
+## Title-zhCN: |cffee0000[PVP]|r 敌对冷却监视
+## Title-zhTW: |cffee0000[PVP]|r 敵對冷卻監視
+## Notes: Shows enemy Cooldowns above Nameplates
+## Notes-zhCN: 在敌方玩家的姓名板上显示他们的技能CD
+## Notes-zhTW: 在敵方玩家的姓名板上顯示他們的技能CD
+## Version: 1.0.2
+## Author: TehLyan, Thoth
+
+IcicleCds.lua
+Icicle.lua

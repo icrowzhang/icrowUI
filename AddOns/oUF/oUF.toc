@@ -1,0 +1,14 @@
+﻿## Interface: 50001
+## Title: oUF
+## Title-zhCN: |cFFC3C3C3oUF|r 基本库
+## Title-zhTW: |cFFC3C3C3oUF|r 基本庫
+## Author: Haste
+## Version: 1.6.0
+## OptionalDeps: !ClassColors, Clique
+## X-eMail: troeks@gmail.com
+## X-oUF: oUF
+## Notes: Unit frame framework. Does nothing by itself.
+## Notes-zhCN: oUF基本库. 可用于制作头像框体的自定义样式.
+## Notes-zhTW: oUF基本庫. 可用於製作頭像框體的自定義樣式.
+
+oUF.xml

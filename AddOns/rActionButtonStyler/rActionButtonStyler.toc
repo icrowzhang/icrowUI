@@ -1,0 +1,12 @@
+﻿## Interface: 50001
+## Author: zork
+## Title: rActionButtonStyler
+## Title-zhCN: |cFF71D5FF美化 -|r 动作条按钮
+## Title-zhTW: |cFF71D5FF美化 -|r 動作條按鈕
+## Notes: The default ActionButtonTemplate with style!
+## Notes-zhCN: 动作条按钮美化插件
+## Notes-zhTW: 動作條按鈕美化插件
+## OptionalDeps: rActionBarStyler
+
+config.lua
+core\core.lua

@@ -1,0 +1,13 @@
+﻿## Interface: 50001
+## Title: mono|cffffffffMinimap|r
+## Title-zhCN: |cFF71D5FF美化 -|r 小地图
+## Title-zhTW: |cFF71D5FF美化 -|r 小地圖
+## Notes: Minimap modifications
+## Notes-zhCN: 小地图美化插件
+## Notes-zhTW: 小地圖美化插件
+## Author: Monolit
+## Version: 2.0
+## OptionalDeps: Blizzard_TimeManager
+## RequiredDeps: !icrowMedia, !UIDropDownMenuFix
+
+m_Minimap.lua
