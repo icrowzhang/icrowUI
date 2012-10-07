@@ -14,9 +14,9 @@ h3. 下载
 
 * "必备字体包":https://github.com/downloads/icrowzhang/icrowUI/Fonts.rar
 
-* "可选字体包(国服)":https://github.com/downloads/icrowzhang/icrowUI/FontsCN.rar
+* "可选字体包 - 国服":https://github.com/downloads/icrowzhang/icrowUI/FontsCN.rar
 
-* "可选字体包(台服)":https://github.com/downloads/icrowzhang/icrowUI/FontsTW.rar
+* "可选字体包 - 台服":https://github.com/downloads/icrowzhang/icrowUI/FontsTW.rar
 
 * "材质包":https://github.com/downloads/icrowzhang/icrowUI/Interface.rar
 
