@@ -107,6 +107,7 @@ for i, section in ipairs(settings) do
 			local spacing = section.spacing or 3
 			local color = section.color or UI.ClassColor()
 			local colors = section.colors or CreateColorArray(color, 5)
+			local filled = DefaultBoolean(section.filled, true)
 			local autohide = DefaultBoolean(section.autohide, true)
 
 			frame = Engine.CreateComboMonitor(name, autohide, anchor, width, height, spacing, colors, filled, specs)
