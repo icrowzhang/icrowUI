@@ -403,8 +403,6 @@ function OpenBag(id, fromb)
 	end
 end
 
-
--- Centralize and rewrite bag opening functions
 function UpdateContainerFrameAnchors() end
 function OpenBackpack()
 	if togglemain ~= 1 then
