@@ -11,3 +11,4 @@ icrowGallery.lua
 BetterPowerBarAlt.lua
 SpellID.lua
 Focuser.lua
+Linkerize.lua
