@@ -85,6 +85,16 @@ function mod:OnCombatStart(delay)
 			end
 		end
 	end
+	if self.Options.InfoFrame then
+		DBM.InfoFrame:SetHeader(ENERGY)
+		DBM.InfoFrame:Show(4, "enemypower", 1)
+	end
+end
+
+function mod:OnCombatEnd()
+	if self.Options.InfoFrame then
+		DBM.InfoFrame:Hide()
+	end
 end
 
 function mod:SPELL_AURA_APPLIED(args)
