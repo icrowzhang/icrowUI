@@ -194,7 +194,7 @@ function StrataFix_OnEvent(frame, event, name, ...)
        StrataFixDB = StrataFixDB or {}
        addon.settings = StrataFixDB
        addon:UpdateSettings()
-       chatMsg("Revision "..revision.." loaded.")
+       --chatMsg("Revision "..revision.." loaded.")
 --[[       
    elseif event == "PLAYER_REGEN_ENABLED" then 
        -- This event is called when the player exits combat
