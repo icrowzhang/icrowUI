@@ -6,6 +6,7 @@
 ## Notes: Calculates optimal reforging for given weights/caps.
 ## Notes-zhCN: 根据给定的属性评分及阈值, 计算出最优重铸方案
 ## Notes-zhTW: 根據給定的屬性評分及閾值, 計算出最優重鑄方案
+## DefaultState: disabled
 ## Version: 1.12
 ## SavedVariables: ReforgeLiteDB
 ## Dependencies: !UIDropDownMenuFix
