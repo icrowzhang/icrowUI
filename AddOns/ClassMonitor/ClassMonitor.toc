@@ -1,0 +1,15 @@
+﻿## Interface: 50001
+## Version: 3.2.5
+## Author: SinaC
+## Title: |cFF148587Class|r Monitor
+## Title-zhCN: |cffC3C3C3[可选]|r 职业资源条
+## Title-zhTW: |cffC3C3C3[可選]|r 職業資源條
+## Credits: Smelly, Hydra, Krevlorne, Ildyria
+## Editors: Ildyria, icrow
+## Notes: Class monitor compatible with Blizzard UI, Tukui and ElvUI
+## Notes-zhCN: 简洁美观的资源条, 包括法力/能量等主资源及连击点/圣能等副资源.
+## Notes-zhTW: 簡潔美觀的資源條, 包括法力/能量等主資源及連擊點/聖能等副資源.
+## OptionalDeps: Tukui, ElvUI
+## RequiredDeps: !icrowMedia
+
+ClassMonitor.xml
