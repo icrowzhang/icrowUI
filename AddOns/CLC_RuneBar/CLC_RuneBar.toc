@@ -7,6 +7,7 @@
 ## Notes: Rune bar from CLC_DK.
 ## Notes-zhCN: 从CLC_DK中扒出来的符文条
 ## Notes-zhTW: 從CLC_DK中扒出來的符文條
+## DefaultState: disabled
 ## RequiredDeps: !icrowMedia
 
 # Embeds
