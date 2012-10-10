@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(685, "DBM-Party-MoP", 3, 312)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7884 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7902 $"):sub(12, -3))
 mod:SetCreatureID(56719)
 mod:SetModelID(43283)
 mod:SetZone()
@@ -31,7 +31,6 @@ function mod:ShaSpikeTarget()
 		specWarnShaSpike:Show()
 	end
 end
-
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(38166) then

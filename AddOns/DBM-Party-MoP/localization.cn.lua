@@ -1,5 +1,5 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 9/29/2012
+-- Last update: 10/09/2012
 
 if GetLocale() ~= "zhCN" then return end
 local L
@@ -88,8 +88,8 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	NovicesPulled	= "You!  You have allowed the Sha to reawaken after all these years!",
-	NovicesDefeated = "You have bested our most junior of students.  Now you will face two of my most senior.",
+	NovicesPulled	= "是你们！这么多年了，是你们又让煞再次苏醒！",
+	NovicesDefeated = "你们只是击败了我最年轻的学徒而已。接下来是我的两位得意门生。",
 --	Defeat			= "I am bested.  Give me a moment and we will venture forth together to face the Sha."
 })
 
@@ -147,11 +147,11 @@ L= DBM:GetModLocalization(649)
 L= DBM:GetModLocalization(708)
 
 L:SetMiscLocalization({
-	Pull		= "Useless, all of you! Even the guards you give me in tribute can't keep these lesser beings from my palace.",
-	Kuai		= "Clan Gurthan will show our King and the rest of you power-hungry imposters why we are the rightful ones at his side!",
-	Ming		= "Clan Harthak will show all why they are the truest of Mogu!",
-	Haiyan		= "Clan Kargesh will demonstrate why only the strong deserve to stand at our King's side!",
-	Defeat		= "Who allowed these outsiders inside our halls? Only Clan Harthak or Clan Kargesh would stoop to such treachery!"
+	Pull		= "废物！你们信誓旦旦地表忠心，却连这些低等生物都赶不出我的宫殿。",
+	Kuai		= "格尔桑氏族会向王上和其他像你们这样利欲熏心的骗子证明，我们才是王上真正的拥护者！",
+	Ming		= "哈飒克氏族会向所有人证明，我们才是血统最纯正的魔古！",
+	Haiyan		= "克尔格西氏族会让你知道，为什么只有强者才配站在我们国王的身边！",
+	Defeat		= "谁让外人闯进大厅的？只有哈飒克或克尔格西氏族才会干出这种叛逆的行径！"
 })
 
 -----------------------
