@@ -1,0 +1,19 @@
+﻿## Interface: 50001
+## Title: BlizzBugsSuck 
+## Title-zhCN: 暴雪漏洞修正库
+## Title-zhTW: 暴雪漏洞修正庫
+## Notes: Fixes UI bugs 
+## Notes-zhCN: 修正暴雪官方界面代码中的漏洞
+## Notes-zhTW: 修正暴雪官方界面代碼中的漏洞
+## Author: Shefki, oscarucb
+## DefaultState: enabled
+## Version: 5.0.4.1
+## X-Curse-Packaged-Version: 5.0.4.1
+## X-Curse-Project-Name: BlizzBugsSuck
+## X-Curse-Project-ID: blizzbugssuck
+## X-Curse-Repository-ID: wow/blizzbugssuck/mainline
+## SavedVariables: StrataFixDB
+
+BlizzBugsSuck.lua
+LibStrataFix\lib.xml
+StrataFix.lua
