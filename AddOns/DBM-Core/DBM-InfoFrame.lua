@@ -83,28 +83,28 @@ do
 	function initializeDropdown(dropdownFrame, level, menu)
 		local info
 		if level == 1 then
-			info = UIDropDownMenu_CreateInfo()
+			info = XUIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_INFOFRAME_LOCK
 			if DBM.Options.InfoFrameLocked then
 				info.checked = true
 			end
 			info.func = toggleLocked
-			UIDropDownMenu_AddButton(info, 1)
+			XUIDropDownMenu_AddButton(info, 1)
 
-			info = UIDropDownMenu_CreateInfo()
+			info = XUIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_INFOFRAME_SHOW_SELF
 			if DBM.Options.InfoFrameShowSelf then
 				info.checked = true
 			end
 			info.func = toggleShowSelf
-			UIDropDownMenu_AddButton(info, 1)		
+			XUIDropDownMenu_AddButton(info, 1)		
 
-			info = UIDropDownMenu_CreateInfo()
+			info = XUIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_INFOFRAME_HIDE
 			info.notCheckable = true
 			info.func = infoFrame.Hide
 			info.arg1 = infoFrame
-			UIDropDownMenu_AddButton(info, 1)
+			XUIDropDownMenu_AddButton(info, 1)
 		end
 	end
 end
@@ -116,7 +116,7 @@ end
 function createFrame()
 	local elapsed = 0
 	local frame = CreateFrame("GameTooltip", "DBMInfoFrame", UIParent, "GameTooltipTemplate")
-	dropdownFrame = CreateFrame("Frame", "DBMInfoFrameDropdown", frame, "UIDropDownMenuTemplate")
+	dropdownFrame = CreateFrame("Frame", "DBMInfoFrameDropdown", frame, "XUIDropDownMenuTemplate")
 	frame:SetFrameStrata("DIALOG")
 	frame:SetPoint(DBM.Options.InfoFramePoint, UIParent, DBM.Options.InfoFramePoint, DBM.Options.InfoFrameX, DBM.Options.InfoFrameY)
 	frame:SetHeight(maxlines*12)
@@ -154,8 +154,8 @@ function createFrame()
 	end)
 	frame:SetScript("OnMouseDown", function(self, button)
 		if button == "RightButton" then
-			UIDropDownMenu_Initialize(dropdownFrame, initializeDropdown, "MENU")
-			ToggleDropDownMenu(1, nil, dropdownFrame, "cursor", 5, -10)
+			XUIDropDownMenu_Initialize(dropdownFrame, initializeDropdown, "MENU")
+			XToggleDropDownMenu(1, nil, dropdownFrame, "cursor", 5, -10)
 		end
 	end)
 	return frame

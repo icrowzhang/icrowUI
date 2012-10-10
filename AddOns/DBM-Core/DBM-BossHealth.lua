@@ -135,7 +135,7 @@ local function createFrame(self)
 	anchor:SetScript("OnMouseDown", onMouseDown)
 	anchor:SetScript("OnMouseUp", onMouseUp)
 	anchor:SetScript("OnHide", onHide)
-	dropdownFrame = CreateFrame("Frame", "DBMBossHealthDropdown", anchor, "UIDropDownMenuTemplate")
+	dropdownFrame = CreateFrame("Frame", "DBMBossHealthDropdown", anchor, "XUIDropDownMenuTemplate")
 	menu[1].checked = DBM.Options.HealthFrameLocked
 end
 
