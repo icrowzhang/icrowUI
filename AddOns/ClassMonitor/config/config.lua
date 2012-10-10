@@ -180,6 +180,7 @@ Engine.Config = {
 		{ -- 3
 			name = "CM_COMBO",
 			kind = "COMBO",
+			specs = {2, 3, 4},
 			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
 			width = 38,
 			height = 8,
@@ -196,14 +197,16 @@ Engine.Config = {
 		{ -- 4
 			name = "CM_ECLIPSE",
 			kind = "ECLIPSE",
-			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
+			spec = 1,
+			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 8 },
 			width = 202,
 			height = 8,
 			text = true,
 			colors = {
-				{0.30, 0.52, 0.90, 1}, -- Lunar
-				{0.80, 0.82, 0.60, 1}, -- Solar
+				{0.10, 0.22, 0.90, 1}, -- Lunar
+				{1, 0.72, 0.10, 1}, -- Solar
 			},
+			autohide = true,
 		},
 		{ -- 5
 			name = "CM_WILDMUSHROOMS",
@@ -214,7 +217,7 @@ Engine.Config = {
 			width = 66,
 			height = 8,
 			spacing = 2,
-			color = { 95/255, 222/255,  95/255, 1 },
+			color = { 35/255, 222/255,  35/255, 1 },
 		},
 	},
 	["PALADIN"] = {
@@ -253,7 +256,7 @@ Engine.Config = {
 			width = 38,
 			height = 8,
 			spacing = 3,
-			color = {0.95, 0.90, 0.60, 1},
+			color = {0.95, 0.90, 0.30, 1},
 			filled = true,
 		},
 	},
@@ -484,7 +487,7 @@ Engine.Config = {
 			name = "CM_MOVER",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
-			width = 201,
+			width = 202,
 			height = 8,
 			text = L.classmonitor_move
 		},
@@ -494,32 +497,8 @@ Engine.Config = {
 			text = true,
 			autohide = true,
 			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
-			width = 201,
+			width = 202,
 			height = 8,
-		},
-		{
-			name = "CM_RUNES",
-			kind = "RUNES",
-			updatethreshold = 0.1,
-			autohide = true,
-			orientation = "HORIZONTAL",
-			anchor = { "BOTTOMLEFT", "CM_RUNIC_POWER", "TOPLEFT", 0, 3 },
-			width = 31,
-			height = 8,
-			spacing = 3,
-			colors = {
-				{1, 0, 0}, -- Blood
-				{0, 0.95, 0}, -- Unholy
-				{0, 1, 1}, -- Frost
-				{0.8, 0.1, 1}, -- Death
-			},
-			-- runemap instructions.
-			-- This is the order you want your runes to be displayed in (down to bottom or left to right).
-			-- 1,2 = Blood
-			-- 3,4 = Unholy
-			-- 5,6 = Frost
-			-- (Note: All numbers must be included or it will break)
-			runemap = { 1, 2, 3, 4, 5, 6 },
 		},
 		{
 			name = "CM_SHADOW_INFUSION",
@@ -528,25 +507,25 @@ Engine.Config = {
 			spellID = 91342, -- Shadow infusion
 			filter = "HELPFUL",
 			count = 5,
-			anchor = { "TOPLEFT", "CM_RUNIC_POWER", "BOTTOMLEFT", 0, -3 },
-			width = 37,
+			anchor = { "BOTTOMLEFT", "CM_RUNIC_POWER", "TOPLEFT", 0, 3 },
+			width = 38,
 			height = 8,
 			spacing = 4,
 			color = { 0.33, 0.59, 0.33, 1 },
 			filled = true,
 		},
 		{
-			name = "CM_BONESHIELD",
+			name = "CM_SCENTOFBLOOD",
 			kind = "AURA",
 			spec = 1,
-			spellID = 49222, -- Bone shield
+			spellID = 50421, -- Scent of Blood
 			filter = "HELPFUL",
-			count = 6,
-			anchor = { "TOPLEFT", "CM_RUNIC_POWER", "BOTTOMLEFT", 0, -3 },
-			width = 31,
+			count = 5,
+			anchor = { "BOTTOMLEFT", "CM_RUNIC_POWER", "TOPLEFT", 0, 3 },
+			width = 38,
 			height = 8,
-			spacing = 3,
-			color = { 0.33, 0.59, 0.33, 1 },
+			spacing = 4,
+			color = { 1, 0.1, 0.1, 1 },
 			filled = true,
 		},
 	},
@@ -652,7 +631,7 @@ Engine.Config = {
 			name = "CM_TOTEMS",
 			kind = "TOTEM",
 			count = 4,
-			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
+			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -8 },
 			width = 49,
 			height = 8,
 			spacing = 2,
@@ -711,7 +690,7 @@ Engine.Config = {
 			spellID = 115867, -- Mana tea
 			filter = "HELPFUL",
 			count = 20,
-			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -8 },
 			width = 201,
 			height = 8,
 			color = {0.5, 0.9, 0.7, 1},
@@ -727,7 +706,7 @@ Engine.Config = {
 			spellID = 125195, -- Tigereye brew
 			filter = "HELPFUL",
 			count = 10,
-			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -8 },
 			width = 201,
 			height = 8,
 			color = {0.5, 0.9, 0.7, 1},
@@ -743,7 +722,7 @@ Engine.Config = {
 			spellID = 128939, -- Elusive brew
 			filter = "HELPFUL",
 			count = 15,
-			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -8 },
 			width = 201,
 			height = 8,
 			color = {0.5, 0.9, 0.7, 1},
