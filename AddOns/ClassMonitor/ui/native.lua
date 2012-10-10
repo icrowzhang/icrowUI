@@ -126,7 +126,7 @@ UI.MyName = UnitName("player")
 
 UI.SetFontString = function(parent, fontHeight, fontStyle)
 	local fs = parent:CreateFontString(nil, "OVERLAY")
-	fs:SetFont(ufFont, 20, "OUTLINE")
+	fs:SetFont(ufFont, 16, "OUTLINE")
 	fs:SetJustifyH("LEFT")
 	return fs
 end
