@@ -9,7 +9,6 @@ local BuildICON = cfg.BuildICON
 if not iWatcherDB then iWatcherDB = {} end
 
 local uflag = true
-local ishunter = (MyClass == "HUNTER") and true or false
 
 -- Init
 local function BuildAuraList()
@@ -208,9 +207,6 @@ Event:SetScript("OnEvent", function(self, event, ...)
 		elseif unitId == "player" then
 			CleanUp("player")
 			UpdateAura("player")
-		elseif unitId == "pet" and ishunter then
-			CleanUp("pet")
-			UpdateAura("pet")
 		end
 	end
 end)
