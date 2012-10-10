@@ -7031,6 +7031,14 @@ Delay:SetScript("OnEvent", function()
 
 		--Large
 		local function LargeSkin()
+			if not InCombatLockdown() then
+				WorldMapFrame:SetParent(UIParent)
+				WorldMapFrame:EnableMouse(false)
+				WorldMapFrame:EnableKeyboard(false)
+				SetUIPanelAttribute(WorldMapFrame, "area", "center");
+				SetUIPanelAttribute(WorldMapFrame, "allowOtherPanels", true)
+			end
+			
 			WorldMapFrame.backdrop:ClearAllPoints()
 			WorldMapFrame.backdrop:SetPoint("TOPLEFT", WorldMapDetailFrame, "TOPLEFT", -25, 70)
 			WorldMapFrame.backdrop:SetPoint("BOTTOMRIGHT", WorldMapDetailFrame, "BOTTOMRIGHT", 25, -30)
@@ -7046,6 +7054,14 @@ Delay:SetScript("OnEvent", function()
 		
 		--Quest
 		local function QuestSkin()
+			if not InCombatLockdown() then
+				WorldMapFrame:SetParent(UIParent)
+				WorldMapFrame:EnableMouse(false)
+				WorldMapFrame:EnableKeyboard(false)
+				SetUIPanelAttribute(WorldMapFrame, "area", "center");
+				SetUIPanelAttribute(WorldMapFrame, "allowOtherPanels", true)
+			end
+			
 			WorldMapFrame.backdrop:ClearAllPoints()
 			WorldMapFrame.backdrop:SetPoint("TOPLEFT", WorldMapDetailFrame, "TOPLEFT", -25, 70)
 			WorldMapFrame.backdrop:SetPoint("BOTTOMRIGHT", WorldMapDetailFrame, "BOTTOMRIGHT", 325, -235)  
