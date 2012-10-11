@@ -2,7 +2,6 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
-local UIConfig = Engine.UIConfig
 
 Engine.CreatePowerMonitor = function(name, autohide, powerType, count, anchor, width, height, spacing, colors, filled, specs)
 	local cmPMs = {}

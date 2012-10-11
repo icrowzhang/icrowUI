@@ -2,7 +2,6 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
-local UIConfig = Engine.UIConfig
 
 
 local shallowInsight = GetSpellInfo(84745)

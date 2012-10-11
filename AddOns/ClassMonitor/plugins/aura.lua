@@ -2,7 +2,6 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
-local UIConfig = Engine.UIConfig
 
 -- Generic method to create BUFF/DEBUFF monitor
 Engine.CreateAuraMonitor = function(name, autohide, unit, spellID, filter, count, anchor, width, height, spacing, colors, filled, specs)

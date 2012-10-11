@@ -3,10 +3,6 @@ if not Engine.Enabled then return end
 
 local L = Engine.Locales
 
-Engine.UIConfig = {
-	shadow = true,
-}
-
 Engine.Config = {
 --[[
 	name = frame name (can be used in anchor)
@@ -420,7 +416,7 @@ Engine.Config = {
 			width = 201,
 			height = 3,
 			spellID = 47755, -- Rapture
-			filling = false,
+			filling = true,
 			duration = 12,
 		},
 	},
