@@ -94,7 +94,7 @@ for i, section in ipairs(settings) do
 			frame = Engine.CreateHealthMonitor(name, unit, text, autohide, anchor, width, height, color, specs)
 		elseif kind == "REGEN" then
 			local spellID = section.spellID
-			local filling = DefaultBoolean(section.filling, false)
+			local filling = DefaultBoolean(section.filling, true)
 			local duration = section.duration
 			local color = section.color or UI.ClassColor()
 
@@ -117,8 +117,8 @@ for i, section in ipairs(settings) do
 			local spacing = section.spacing or 3
 			local color = section.color or UI.ClassColor()
 			local colors = section.colors or CreateColorArray(color, count)
-			local filled = DefaultBoolean(section.filled, false)
-			local autohide = DefaultBoolean(section.autohide, false)
+			local filled = DefaultBoolean(section.filled, true)
+			local autohide = DefaultBoolean(section.autohide, true)
 
 			if powerType == SPELL_POWER_BURNING_EMBERS then
 				frame = Engine.CreateBurningEmbersMonitor(name, autohide, anchor, width, height, spacing, colors) -- TODO: autohide
@@ -141,7 +141,7 @@ for i, section in ipairs(settings) do
 				local spacing = section.spacing
 				local color = section.color or UI.ClassColor()
 				local colors = section.colors or CreateColorArray(color, count)
-				local filled = DefaultBoolean(section.filled, false)
+				local filled = DefaultBoolean(section.filled, true)
 				local bar = DefaultBoolean(section.bar, false)
 
 				if bar then
@@ -210,6 +210,7 @@ for i, section in ipairs(settings) do
 			local spacing = section.spacing or 3
 			local color = section.color or UI.ClassColor()
 			local colors = section.colors or CreateColorArray(color, 3)
+			local filled = DefaultBoolean(section.filled, true)
 			local autohide = DefaultBoolean(section.autohide, true)
 
 			frame = Engine.CreateBanditsGuileMonitor(name, autohide, anchor, width, height, spacing, colors, filled)
