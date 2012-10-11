@@ -14,6 +14,7 @@ QQChat.lua
 buttons.lua
 channel.lua
 GlobalStrings.lua
+ChatFilter.lua
 Spamagemeters.lua
 StatReport.lua
 ChatEmote.lua
