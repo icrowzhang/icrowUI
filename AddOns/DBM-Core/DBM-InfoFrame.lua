@@ -42,6 +42,11 @@
 --    * blip_8.ogg by Corsica_S (http://www.freesound.org/usersViewSingle.php?id=7037)
 --  The full of text of the license can be found in the file "Sounds\Creative Commons Sampling Plus 1.0.txt".
 
+local UIDropDownMenu_CreateInfo = XUIDropDownMenu_CreateInfo
+local UIDropDownMenu_AddButton = XUIDropDownMenu_AddButton
+local UIDropDownMenu_Initialize = XUIDropDownMenu_Initialize
+local ToggleDropDownMenu = XToggleDropDownMenu
+
 ---------------
 --  Globals  --
 ---------------
@@ -83,28 +88,28 @@ do
 	function initializeDropdown(dropdownFrame, level, menu)
 		local info
 		if level == 1 then
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_INFOFRAME_LOCK
 			if DBM.Options.InfoFrameLocked then
 				info.checked = true
 			end
 			info.func = toggleLocked
-			XUIDropDownMenu_AddButton(info, 1)
+			UIDropDownMenu_AddButton(info, 1)
 
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_INFOFRAME_SHOW_SELF
 			if DBM.Options.InfoFrameShowSelf then
 				info.checked = true
 			end
 			info.func = toggleShowSelf
-			XUIDropDownMenu_AddButton(info, 1)		
+			UIDropDownMenu_AddButton(info, 1)		
 
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_INFOFRAME_HIDE
 			info.notCheckable = true
 			info.func = infoFrame.Hide
 			info.arg1 = infoFrame
-			XUIDropDownMenu_AddButton(info, 1)
+			UIDropDownMenu_AddButton(info, 1)
 		end
 	end
 end
@@ -154,8 +159,8 @@ function createFrame()
 	end)
 	frame:SetScript("OnMouseDown", function(self, button)
 		if button == "RightButton" then
-			XUIDropDownMenu_Initialize(dropdownFrame, initializeDropdown, "MENU")
-			XToggleDropDownMenu(1, nil, dropdownFrame, "cursor", 5, -10)
+			UIDropDownMenu_Initialize(dropdownFrame, initializeDropdown, "MENU")
+			ToggleDropDownMenu(1, nil, dropdownFrame, "cursor", 5, -10)
 		end
 	end)
 	return frame

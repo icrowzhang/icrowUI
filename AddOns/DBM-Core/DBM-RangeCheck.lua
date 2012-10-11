@@ -42,11 +42,15 @@
 --    * blip_8.ogg by Corsica_S (http://www.freesound.org/usersViewSingle.php?id=7037)
 --  The full of text of the license can be found in the file "Sounds\Creative Commons Sampling Plus 1.0.txt".
 
+local UIDropDownMenu_CreateInfo = XUIDropDownMenu_CreateInfo
+local UIDropDownMenu_AddButton = XUIDropDownMenu_AddButton
+local UIDropDownMenu_Initialize = XUIDropDownMenu_Initialize
+local ToggleDropDownMenu = XToggleDropDownMenu
+
 ---------------
 --  Globals  --
 ---------------
 DBM.RangeCheck = {}
-
 
 --------------
 --  Locals  --
@@ -142,26 +146,26 @@ do
 	function initializeDropdown(dropdownFrame, level, menu)
 		local info
 		if level == 1 then
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_RANGECHECK_SETRANGE
 			info.notCheckable = true
 			info.hasArrow = true
 			info.menuList = "range"
-			XUIDropDownMenu_AddButton(info, 1)
+			UIDropDownMenu_AddButton(info, 1)
 
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_RANGECHECK_SOUNDS
 			info.notCheckable = true
 			info.hasArrow = true
 			info.menuList = "sounds"
-			XUIDropDownMenu_AddButton(info, 1)
+			UIDropDownMenu_AddButton(info, 1)
 
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_RANGECHECK_OPTION_FRAMES
 			info.notCheckable = true
 			info.hasArrow = true
 			info.menuList = "frames"
-			XUIDropDownMenu_AddButton(info, 1)
+			UIDropDownMenu_AddButton(info, 1)
 
 --[[			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_RANGECHECK_OPTION_SPEED
@@ -170,174 +174,174 @@ do
 			info.menuList = "speed"
 			UIDropDownMenu_AddButton(info, 1)]]
 
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_RANGECHECK_LOCK
 			if DBM.Options.RangeFrameLocked then
 				info.checked = true
 			end
 			info.func = toggleLocked
-			XUIDropDownMenu_AddButton(info, 1)
+			UIDropDownMenu_AddButton(info, 1)
 
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_RANGECHECK_HIDE
 			info.notCheckable = true
 			info.func = rangeCheck.Hide
 			info.arg1 = rangeCheck
-			XUIDropDownMenu_AddButton(info, 1)
+			UIDropDownMenu_AddButton(info, 1)
 
 		elseif level == 2 then
 			if menu == "range" then
 				if initRangeCheck() then
-					info = XUIDropDownMenu_CreateInfo()
+					info = UIDropDownMenu_CreateInfo()
 					info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(3)
 					info.func = setRange
 					info.arg1 = 3
 					info.checked = (frame.range == 3)
-					XUIDropDownMenu_AddButton(info, 2)
+					UIDropDownMenu_AddButton(info, 2)
 				end
 
 				if initRangeCheck() then
-					info = XUIDropDownMenu_CreateInfo()
+					info = UIDropDownMenu_CreateInfo()
 					info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(4)
 					info.func = setRange
 					info.arg1 = 4
 					info.checked = (frame.range == 4)
-					XUIDropDownMenu_AddButton(info, 2)
+					UIDropDownMenu_AddButton(info, 2)
 				end
 
 				if initRangeCheck() then
-					info = XUIDropDownMenu_CreateInfo()
+					info = UIDropDownMenu_CreateInfo()
 					info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(5)
 					info.func = setRange
 					info.arg1 = 5
 					info.checked = (frame.range == 5)
-					XUIDropDownMenu_AddButton(info, 2)
+					UIDropDownMenu_AddButton(info, 2)
 				end
 
 				if initRangeCheck() then
-					info = XUIDropDownMenu_CreateInfo()
+					info = UIDropDownMenu_CreateInfo()
 					info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(6)
 					info.func = setRange
 					info.arg1 = 6
 					info.checked = (frame.range == 6)
-					XUIDropDownMenu_AddButton(info, 2)
+					UIDropDownMenu_AddButton(info, 2)
 				end
 
 				if initRangeCheck() then
-					info = XUIDropDownMenu_CreateInfo()
+					info = UIDropDownMenu_CreateInfo()
 					info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(8)
 					info.func = setRange
 					info.arg1 = 8
 					info.checked = (frame.range == 8)
-					XUIDropDownMenu_AddButton(info, 2)
+					UIDropDownMenu_AddButton(info, 2)
 				end
 
-				info = XUIDropDownMenu_CreateInfo()
+				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(10)
 				info.func = setRange
 				info.arg1 = 10
 				info.checked = (frame.range == 10)
-				XUIDropDownMenu_AddButton(info, 2)
+				UIDropDownMenu_AddButton(info, 2)
 
-				info = XUIDropDownMenu_CreateInfo()
+				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(11)
 				info.func = setRange
 				info.arg1 = 11
 				info.checked = (frame.range == 11)
-				XUIDropDownMenu_AddButton(info, 2)
+				UIDropDownMenu_AddButton(info, 2)
 
 				if initRangeCheck() then
-					info = XUIDropDownMenu_CreateInfo()
+					info = UIDropDownMenu_CreateInfo()
 					info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(12)
 					info.func = setRange
 					info.arg1 = 12
 					info.checked = (frame.range == 12)
-					XUIDropDownMenu_AddButton(info, 2)
+					UIDropDownMenu_AddButton(info, 2)
 				end
 
-				info = XUIDropDownMenu_CreateInfo()
+				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(15)
 				info.func = setRange
 				info.arg1 = 15
 				info.checked = (frame.range == 15)
-				XUIDropDownMenu_AddButton(info, 2)
+				UIDropDownMenu_AddButton(info, 2)
 
 				if initRangeCheck() then
-					info = XUIDropDownMenu_CreateInfo()
+					info = UIDropDownMenu_CreateInfo()
 					info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(20)
 					info.func = setRange
 					info.arg1 = 20
 					info.checked = (frame.range == 20)
-					XUIDropDownMenu_AddButton(info, 2)
+					UIDropDownMenu_AddButton(info, 2)
 				end
 
-				info = XUIDropDownMenu_CreateInfo()
+				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_RANGECHECK_SETRANGE_TO:format(28)
 				info.func = setRange
 				info.arg1 = 28
 				info.checked = (frame.range == 28)
-				XUIDropDownMenu_AddButton(info, 2)
+				UIDropDownMenu_AddButton(info, 2)
 			elseif menu == "sounds" then
-				info = XUIDropDownMenu_CreateInfo()
+				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_RANGECHECK_SOUND_OPTION_1
 				info.notCheckable = true
 				info.hasArrow = true
 				info.menuList = "RangeFrameSound1"
-				XUIDropDownMenu_AddButton(info, 2)
+				UIDropDownMenu_AddButton(info, 2)
 
-				info = XUIDropDownMenu_CreateInfo()
+				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_RANGECHECK_SOUND_OPTION_2
 				info.notCheckable = true
 				info.hasArrow = true
 				info.menuList = "RangeFrameSound2"
-				XUIDropDownMenu_AddButton(info, 2)
+				UIDropDownMenu_AddButton(info, 2)
 			elseif menu == "frames" then
-				info = XUIDropDownMenu_CreateInfo()
+				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_RANGECHECK_OPTION_TEXT
 				info.func = setFrames
 				info.arg1 = "text"
 				info.checked = (DBM.Options.RangeFrameFrames == "text")
-				XUIDropDownMenu_AddButton(info, 2)
+				UIDropDownMenu_AddButton(info, 2)
 
-				info = XUIDropDownMenu_CreateInfo()
+				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_RANGECHECK_OPTION_RADAR
 				info.func = setFrames
 				info.arg1 = "radar"
 				info.checked = (DBM.Options.RangeFrameFrames == "radar")
-				XUIDropDownMenu_AddButton(info, 2)
+				UIDropDownMenu_AddButton(info, 2)
 
-				info = XUIDropDownMenu_CreateInfo()
+				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_RANGECHECK_OPTION_BOTH
 				info.func = setFrames
 				info.arg1 = "both"
 				info.checked = (DBM.Options.RangeFrameFrames == "both")
-				XUIDropDownMenu_AddButton(info, 2)
+				UIDropDownMenu_AddButton(info, 2)
 			end
 		elseif level == 3 then
 			local option = menu
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_RANGECHECK_SOUND_0
 			info.func = setSound
 			info.arg1 = option
 			info.arg2 = sound0
 			info.checked = (DBM.Options[option] == sound0)
-			XUIDropDownMenu_AddButton(info, 3)
+			UIDropDownMenu_AddButton(info, 3)
 			
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_RANGECHECK_SOUND_1
 			info.func = setSound
 			info.arg1 = option
 			info.arg2 = sound1
 			info.checked = (DBM.Options[option] == sound1)
-			XUIDropDownMenu_AddButton(info, 3)
+			UIDropDownMenu_AddButton(info, 3)
 			
-			info = XUIDropDownMenu_CreateInfo()
+			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_RANGECHECK_SOUND_2
 			info.func = setSound
 			info.arg1 = option
 			info.arg2 = sound2
 			info.checked = (DBM.Options[option] == sound2)
-			XUIDropDownMenu_AddButton(info, 3)
+			UIDropDownMenu_AddButton(info, 3)
 		end
 	end
 end
@@ -415,8 +419,8 @@ function createFrame()
 	end)
 	frame:SetScript("OnMouseDown", function(self, button)
 		if button == "RightButton" then
-			XUIDropDownMenu_Initialize(dropdownFrame, initializeDropdown, "MENU")
-			XToggleDropDownMenu(1, nil, dropdownFrame, "cursor", 5, -10)
+			UIDropDownMenu_Initialize(dropdownFrame, initializeDropdown, "MENU")
+			ToggleDropDownMenu(1, nil, dropdownFrame, "cursor", 5, -10)
 		end
 	end)
 	return frame
@@ -456,8 +460,8 @@ function createRadarFrame()
 	end)
 	radarFrame:SetScript("OnMouseDown", function(self, button)
 		if button == "RightButton" then
-			XUIDropDownMenu_Initialize(dropdownFrame, initializeDropdown, "MENU")
-			XToggleDropDownMenu(1, nil, dropdownFrame, "cursor", 5, -10)
+			UIDropDownMenu_Initialize(dropdownFrame, initializeDropdown, "MENU")
+			ToggleDropDownMenu(1, nil, dropdownFrame, "cursor", 5, -10)
 		end
 	end)
 
