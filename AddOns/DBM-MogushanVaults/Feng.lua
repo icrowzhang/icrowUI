@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(689, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7898 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7932 $"):sub(12, -3))
 mod:SetCreatureID(60009)--60781 Soul Fragment
 mod:SetModelID(41192)
 mod:SetZone()
@@ -258,7 +258,11 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnChainsOfShadow:Show()
 		timerChainsOfShadowCD:Start()
 	elseif args:IsSpellID(115817) then
-		timerNullBarriorCD:Start()
+		if self:IsDifficulty("lfr25") then
+			timerNullBarriorCD:Start(25)
+		else
+			timerNullBarriorCD:Start()
+		end
 	end
 end
 

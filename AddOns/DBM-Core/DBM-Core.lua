@@ -89,7 +89,7 @@ imsg.text:SetJustifyH("CENTER")
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 7925 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 7935 $"):sub(12, -3)),
 	DisplayVersion = "5.0.0 alpha", -- the string that is shown as version
 	ReleaseRevision = 7916 -- the revision of the latest stable version that is available
 }
@@ -3701,7 +3701,7 @@ end
 
 --A simple check to see if these classes know "Meditation".
 function bossModPrototype:IsHealer()
-	return (class == "PALADIN" and IsSpellKnown(95859))
+	return (class == "PALADIN" and IsSpellKnown(112859))
 	or (class == "SHAMAN" and IsSpellKnown(95862))
 	or (class == "DRUID" and IsSpellKnown(85101))
 	or (class == "PRIEST" and (IsSpellKnown(95860) or IsSpellKnown(95861)))
