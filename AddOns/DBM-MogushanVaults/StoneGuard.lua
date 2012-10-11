@@ -77,7 +77,7 @@ end
 
 local function getBossuId()
 	local uId
-	if UnitExits("boss1") or UnitExits("boss2") or UnitExits("boss3") or UnitExits("boss4") then
+	if UnitExists("boss1") or UnitExists("boss2") or UnitExists("boss3") or UnitExists("boss4") then
 		for i = 1, 4 do
 			if UnitName("boss"..i) == Cobalt then
 				uId = "boss"..i
