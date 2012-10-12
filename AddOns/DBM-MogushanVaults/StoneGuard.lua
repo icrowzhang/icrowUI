@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(679, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7934 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7943 $"):sub(12, -3))
 mod:SetCreatureID(60051, 60043, 59915, 60047)--Cobalt: 60051, Jade: 60043, Jasper: 59915, Amethyst: 60047
 mod:SetModelID(41892)
 mod:SetZone()
@@ -70,23 +70,34 @@ local function warnAmethystPoolTargets()
 	table.wipe(amethystPoolTargets)
 end
 
+local function poolTargetCheck(name)
+	if #amethystPoolTargets > 0 and name then
+		for i = 1, #amethystPoolTargets do
+			if amethystPoolTargets[i] == name then
+				return false
+			end
+		end
+	end
+	return true
+end
+
 local function warnJasperChainsTargets()
 	warnJasperChains:Show(table.concat(jasperChainsTargets, "<, >"))
 	table.wipe(jasperChainsTargets)
 end
 
-local function getBossuId()
+local function getBossuId(Boss)
 	local uId
 	if UnitExists("boss1") or UnitExists("boss2") or UnitExists("boss3") or UnitExists("boss4") then
 		for i = 1, 4 do
-			if UnitName("boss"..i) == Cobalt then
+			if UnitName("boss"..i) == Boss then
 				uId = "boss"..i
 				break
 			end
 		end
 	else
 		for i = 1, DBM:GetGroupMembers() do
-			if UnitName("raid"..i.."target") == Cobalt and not UnitIsPlayer("raid"..i.."target") then
+			if UnitName("raid"..i.."target") == Boss and not UnitIsPlayer("raid"..i.."target") then
 				uId = "raid"..i.."target"
 				break
 			end			
@@ -102,7 +113,7 @@ local function isTank(unit)
 	if UnitGroupRolesAssigned(unit) == "TANK" then
 		return true
 	end
-	local uId = getBossuId()
+	local uId = getBossuId(Cobalt)
 	if uId and UnitExists(uId.."target") and UnitDetailedThreatSituation(unit, uId) then
 		return true
 	end
@@ -180,10 +191,6 @@ function mod:OnCombatStart(delay)
 			end
 		end
 	end
-	if self.Options.InfoFrame then
-		DBM.InfoFrame:SetHeader("--")
-		DBM.InfoFrame:Show(4, "enemypower", 1)
-	end
 end
 
 function mod:OnCombatEnd()
@@ -201,11 +208,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerJasperChainsCD:Start()
 		self:Unschedule(warnJasperChainsTargets)
 		self:Schedule(0.3, warnJasperChainsTargets)
-		if args:IsPlayer() then
-			playerHasChains = true
-			specWarnJasperChains:Show()
-			yellJasperChains:Yell()
-		end
 		if activePetrification ~= "Jasper" then
 			if self.Options.ArrowOnJasperChains and #jasperChainsTargets == 2 then
 				if jasperChainsTargets[1] == UnitName("player") then
@@ -213,6 +215,16 @@ function mod:SPELL_AURA_APPLIED(args)
 				elseif jasperChainsTargets[2] == UnitName("player") then
 					DBM.Arrow:ShowRunTo(jasperChainsTargets[1])
 				end
+			end
+		end
+		if args:IsPlayer() then
+			playerHasChains = true
+			specWarnJasperChains:Show()
+			yellJasperChains:Yell()
+			local uId = getBossuId(Jasper)
+			if uId and UnitPower(uId) <= 50 and activePetrification == "Jasper" then--Make sure his energy isn't already high, otherwise breaking chains when jasper will only be active for a few seconds is bad
+				specWarnBreakJasperChains:Show()
+				DBM.Arrow:Hide()
 			end
 		end
 	elseif args:IsSpellID(130774) and args:IsPlayer() then
@@ -254,7 +266,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnJadeShards:Show()
 		timerJadeShardsCD:Start()
 	elseif args:IsSpellID(116235, 130774) then--is 116235 still used? my logs show ONLY 130774 being used.
-		if self:AntiSpam(3, args.destName) then--because for some reason it fires 3 times per player, we don't want more than one occurance of each player, so we use playername as antispam filter.
+		if poolTargetCheck(args.destName) then--antispam can not prevent spam, try another way.
 			amethystPoolTargets[#amethystPoolTargets + 1] = args.destName
 			self:Unschedule(warnAmethystPoolTargets)
 			self:Schedule(0.5, warnAmethystPoolTargets)
@@ -291,28 +303,35 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Cobalt)
+			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
 		end
 	elseif spellId == 116006 and self:AntiSpam(2, 2) then
 		activePetrification = "Jade"
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Jade)
+			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
 		end
 	elseif spellId == 116036 and self:AntiSpam(2, 3) then
 		activePetrification = "Jasper"
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Jasper)
+			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
 		end
 		if playerHasChains then
-			specWarnBreakJasperChains:Show()
-			DBM.Arrow:Hide()
+			local uId = getBossuId(Jasper)
+			if uId and UnitPower(uId) <= 50 then--Make sure his energy isn't already high, otherwise breaking chains when jasper will only be active for a few seconds is bad
+				specWarnBreakJasperChains:Show()
+				DBM.Arrow:Hide()
+			end
 		end
 	elseif spellId == 116057 and self:AntiSpam(2, 4) then
 		activePetrification = "Amethyst"
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Amethyst)
+			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
 		end
 	elseif spellId == 129424 and self:AntiSpam(2, 5) then
 		scansDone = 0
@@ -328,3 +347,4 @@ function mod:GetHP()
 	local jadeHp = self:GetBossHPString(60043)
 	return cobaltHp ~= DBM_CORE_UNKNOWN and cobaltHp or jadeHp
 end
+
