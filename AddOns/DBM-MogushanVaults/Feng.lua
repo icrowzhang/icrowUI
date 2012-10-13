@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(689, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7937 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7949 $"):sub(12, -3))
 mod:SetCreatureID(60009)--60781 Soul Fragment
 mod:SetModelID(41192)
 mod:SetZone()
@@ -228,7 +228,7 @@ function mod:SPELL_AURA_APPLIED_DOSE(args)
 			end
 		end
 	elseif args:IsSpellID(131792) then
-		warnShadowBurn:Show(args.destName, 1)
+		warnShadowBurn:Show(args.destName, args.amount or 1)
 		timerShadowBurn:Start(args.destName)
 		timerShadowBurnCD:Start()
 		if args:IsPlayer() and (args.amount or 1) >= 3 then
@@ -332,7 +332,9 @@ function mod:OnSync(msg)
 		phase = phase + 1
 		warnPhase:Show(phase)
 		timerArcaneShockCD:Start(7)
-		timerArcaneResonanceCD:Start(14)
+		-- 10/13 01:11:24.437  YELL: Oh sage of the ages! Instill to me your arcane wisdom!
+		-- 10/13 01:11:36.671  SPELL_CAST_SUCCESS,0xF150EA690000478E,"",0x10a48,0x0,0x0000000000000000,nil,0x80000000,0x80000000,116417,"",0x40
+		timerArcaneResonanceCD:Start(12)
 		timerArcaneVelocityCD:Start(16.5, 1)--It's either this, or this +10. Not yet sure what causes the +10
 	elseif msg == "Dark" then
 		phase = phase + 1
