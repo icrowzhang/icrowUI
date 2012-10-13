@@ -11,6 +11,7 @@
 ## Notes: Deadly Boss Mods
 ## SavedVariablesPerCharacter: DBM_SavedOptions, DBT_SavedOptions
 ## LoadOnDemand: 0
+## RequiredDeps: !UIDropDownMenuFix
 ## DefaultState: enabled
 ## Author: Tandanu and Nitram
 ## X-Website: http://www.deadlybossmods.com
