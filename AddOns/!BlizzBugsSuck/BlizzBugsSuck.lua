@@ -184,3 +184,11 @@ if wow_build >= 16016 then
 	frame:SetScript("OnEvent",OnEvent)
 	frame:RegisterEvent("ADDON_LOADED")
 end
+
+-- need to be opened at least one time before logging in, or big chance of taint later ...
+local taint = CreateFrame("Frame")
+taint:RegisterEvent("ADDON_LOADED")
+taint:SetScript("OnEvent", function(self, event, addon)
+   if addon ~= "!BlizzBugsSuck" then return end
+   ToggleFrame(SpellBookFrame)
+end)
