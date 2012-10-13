@@ -4,6 +4,23 @@
 local gtt = GameTooltip
 local GetTalentTabInfo = GetTalentTabInfo
 
+-- Localization
+local L_TOOLTIP_LOADING, L_TOOLTIP_NO_TALENT, L_TOOLTIP_INSPECTING
+
+if GetLocale() == "zhCN" then
+	L_TOOLTIP_LOADING = "正在查询"
+	L_TOOLTIP_NO_TALENT = "无"
+	L_TOOLTIP_INSPECTING = "正在观察"
+elseif GetLocale() == "zhTW" then
+	L_TOOLTIP_LOADING = "正在查詢"
+	L_TOOLTIP_NO_TALENT = "無"
+	L_TOOLTIP_INSPECTING = "正在觀察"
+else
+	L_TOOLTIP_LOADING = "Loading"
+	L_TOOLTIP_NO_TALENT = "No Talents"
+	L_TOOLTIP_INSPECTING = "Inspecting"
+end
+
 -- Constants
 local TALENTS_PREFIX = TALENTS..":|cff00ff00 "
 local CACHE_SIZE = 25
@@ -142,10 +159,10 @@ gtt:HookScript("OnTooltipSetUnit", function(self, ...)
 			ttt.nextUpdate = (lastInspectTime > INSPECT_FREQ) and INSPECT_DELAY or (INSPECT_FREQ - lastInspectTime + INSPECT_DELAY)
 			ttt:Show()
 			if not cacheLoaded then
-				self:AddLine(TALENTS_PREFIX.."正在查询")
+				self:AddLine(TALENTS_PREFIX..L_TOOLTIP_LOADING)
 			end
 		elseif isInspectOpen then
-			self:AddLine(TALENTS_PREFIX.."正在观察")
+			self:AddLine(TALENTS_PREFIX..L_TOOLTIP_INSPECTING)
 		end
 	end
 end)
