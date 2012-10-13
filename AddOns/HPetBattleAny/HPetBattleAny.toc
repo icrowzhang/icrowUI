@@ -5,6 +5,7 @@
 ## Notes-zhCN: 提醒野生宠物品质等,输入/hpq设置
 ## Title-zhTW: 戰寵品質提示
 ## Notes-zhTW: 提醒野生戰寵品質等,輸入/hpq設置
+## DefaultState: disabled
 ## Author: HShine
 ## Author-zhCN: 上官晓雾
 ## Author-zhTW: 上官曉霧

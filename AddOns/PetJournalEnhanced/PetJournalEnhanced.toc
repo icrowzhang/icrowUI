@@ -5,6 +5,7 @@
 ## Notes: Configurable sorting of your pets in Pet Journal.
 ## Notes-zhCN: 可自定义宠物图鉴中的宠物排序.
 ## Notes-zhTW: 可自定義戰寵圖鑑中的戰寵排序.
+## DefaultState: disabled
 ## Author: nullberri(汉化:上官晓雾)
 ## Version: 2.3.3 
 ## X-Date: 2012-7-25
