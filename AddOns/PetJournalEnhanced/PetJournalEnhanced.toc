@@ -1,0 +1,35 @@
+﻿## Interface: 50001
+## Title: PetJournal Enhanced
+## Title-zhCN: 宠物图鉴增强
+## Title-zhTW: 戰寵圖鑑增強
+## Notes: Configurable sorting of your pets in Pet Journal.
+## Notes-zhCN: 可自定义宠物图鉴中的宠物排序.
+## Notes-zhTW: 可自定義戰寵圖鑑中的戰寵排序.
+## Author: nullberri(汉化:上官晓雾)
+## Version: 2.3.3 
+## X-Date: 2012-7-25
+## X-Category: Pet Journal
+## X-Localizations: enUS
+## X-Localizations: zhCN
+## X-Localizations: zhTW
+## SavedVariables: PetJournalEnhancedOptions
+## Dependencies: Blizzard_PetJournal
+
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+
+libs\AceAddon-3.0\AceAddon-3.0.xml
+libs\AceGUI-3.0\AceGUI-3.0.xml
+libs\AceDB-3.0\AceDB-3.0.xml
+libs\AceEvent-3.0\AceEvent-3.0.xml
+libs\LibPetJournal-2.0\LibPetJournal-2.0.lua
+libs\AceConfig-3.0\AceConfig-3.0.xml
+
+
+PetJournalEnhanced.lua
+modules\UniqueCount.lua
+modules\Config.lua
+modules\PetBattleQuality.lua
+modules\PetBattleInfo.lua
+
+localization.lua
