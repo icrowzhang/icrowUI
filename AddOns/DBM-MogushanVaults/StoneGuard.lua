@@ -191,6 +191,10 @@ function mod:OnCombatStart(delay)
 			end
 		end
 	end
+	if self.Options.InfoFrame then
+		DBM.InfoFrame:SetHeader("--")
+		DBM.InfoFrame:Show(4, "enemypower", 1)
+	end
 end
 
 function mod:OnCombatEnd()
@@ -243,21 +247,33 @@ end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(115840) then -- Cobalt
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader("--")
+		end
 		warnCobaltOverload:Show()
 		if activePetrification == "Cobalt" then
 			timerPetrification:Cancel()
 		end
 	elseif args:IsSpellID(115842) then -- Jade
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader("--")
+		end
 		warnJadeOverload:Show()
 		if activePetrification == "Jade" then
 			timerPetrification:Cancel()
 		end
 	elseif args:IsSpellID(115843) then -- Jasper
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader("--")
+		end
 		warnJasperOverload:Show()
 		if activePetrification == "Jasper" then
 			timerPetrification:Cancel()
 		end
 	elseif args:IsSpellID(115844) then -- Amethyst
+		if self.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader("--")
+		end
 		warnAmethystOverload:Show()
 		if activePetrification == "Amethyst" then
 			timerPetrification:Cancel()
@@ -303,21 +319,18 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Cobalt)
-			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
 		end
 	elseif spellId == 116006 and self:AntiSpam(2, 2) then
 		activePetrification = "Jade"
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Jade)
-			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
 		end
 	elseif spellId == 116036 and self:AntiSpam(2, 3) then
 		activePetrification = "Jasper"
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Jasper)
-			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
 		end
 		if playerHasChains then
 			local uId = getBossuId(Jasper)
@@ -331,7 +344,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerPetrification:Start()
 		if self.Options.InfoFrame then
 			DBM.InfoFrame:SetHeader(Amethyst)
-			DBM.InfoFrame:Show(5, "enemypower", 1, nil, nil, ALTERNATE_POWER_INDEX)
 		end
 	elseif spellId == 129424 and self:AntiSpam(2, 5) then
 		scansDone = 0
