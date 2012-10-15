@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(726, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 7929 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7954 $"):sub(12, -3))
 mod:SetCreatureID(60410)--Energy Charge (60913), Emphyreal Focus (60776), Cosmic Spark (62618), Celestial Protector (60793)
 mod:SetModelID(41399)
 mod:SetZone()
@@ -61,7 +61,7 @@ function mod:OnCombatStart(delay)
 	protectorCount = 0
 	table.wipe(closedCircuitTargets)
 	timerBreathCD:Start(8-delay)
-	timerProtectorCD:Start(14-delay)
+	timerProtectorCD:Start(12-delay)
 	berserkTimer:Start(-delay)
 end
 
