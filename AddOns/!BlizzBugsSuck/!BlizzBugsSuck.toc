@@ -15,5 +15,3 @@
 ## SavedVariables: StrataFixDB
 
 BlizzBugsSuck.lua
-LibStrataFix\lib.xml
-StrataFix.lua
