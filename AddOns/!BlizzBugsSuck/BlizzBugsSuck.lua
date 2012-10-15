@@ -187,8 +187,8 @@ end
 
 -- need to be opened at least one time before logging in, or big chance of taint later ...
 local taint = CreateFrame("Frame")
-taint:RegisterEvent("ADDON_LOADED")
+taint:RegisterEvent("PLAYER_ENTERING_WORLD")
 taint:SetScript("OnEvent", function(self, event, addon)
-   if addon ~= "!BlizzBugsSuck" then return end
-   ToggleFrame(SpellBookFrame)
+	ToggleFrame(SpellBookFrame)
+	ToggleFrame(SpellBookFrame)
 end)
