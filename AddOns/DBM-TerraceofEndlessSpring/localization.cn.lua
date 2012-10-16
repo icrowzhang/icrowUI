@@ -1,7 +1,4 @@
-﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 9/27/2012
-
-if GetLocale() ~= "zhCN" then return end
+﻿if GetLocale() ~= "zhCN" then return end
 local L
 
 ------------
@@ -10,8 +7,11 @@ local L
 L= DBM:GetModLocalization(683)
 
 L:SetOptionLocalization({
-	RangeFrame			= "距离监视（8码）：$spell:111850\n当你受到效果影响时会显示其他所有没有受到效果影响的队友",
-	SetIconOnPrison		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(117436)
+	RangeFrame			= "距离监视(8码)：$spell:111850(智能)",
+	HudMAP				= "高级定位监视(HUD)：$spell:111850的位置",
+	SetIconOnPrison		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(117436),
+	SoundDW				= "语音警告：$spell:117283的驱散",
+	SoundWOP			= "语音警告：重要技能"
 })
 
 
@@ -20,8 +20,20 @@ L:SetOptionLocalization({
 ------------
 L= DBM:GetModLocalization(742)
 
+L:SetOptionLocalization({
+	SoundWOP					= "语音警告：重要技能",
+	SoundJK						= "语音警告：$spell:123011的预先警告",
+	HudMAP						= "高级定位监视(HUD)：$spell:122770的位置(仅10人准确)",
+	optDS						= "\"恐怖阴影\"叠加几层时，开始报警",
+	six							= "6层",
+	nine						= "9层",
+	twelve						= "12层",
+	fifteen						= "15层",
+	none						= "不报警",
+})
+
 L:SetMiscLocalization{
-	Victory	= "I thank you, strangers. I have been freed."
+	Victory	= "谢谢你，陌生人。我重获自由了。"
 }
 
 
@@ -31,20 +43,21 @@ L:SetMiscLocalization{
 L= DBM:GetModLocalization(729)
 
 L:SetWarningLocalization({
-	warnHideOver			= "%s 结束"
+	warnHideOver			= "%s 已结束"
 })
 
 L:SetTimerLocalization({
-	timerSpecialCD			= "下一次特殊能力"
+	timerSpecialCD			= "下一次特殊技能"
 })
 
 L:SetOptionLocalization({
-	warnHideOver			= "特殊警报：$spell:123244效果结束时",
-	timerSpecialCD			= "计时条：下一次特殊能力"
+	warnHideOver			= "警告：当$spell:123244结束时",
+	timerSpecialCD			= "计时器：下一次特殊技能",
+	SoundWOP				= "语音警告：重要技能"
 })
 
 L:SetMiscLocalization{
-	Victory	= "I... ah... oh! Did I...? Was I...? It was... so... cloudy."--wtb alternate and less crappy victory event.
+	Victory	= "我...啊..喔!我曾经...?我是不是...?这一切...都太...模糊了。"--wtb alternate and less crappy victory event.
 }
 
 
@@ -53,3 +66,7 @@ L:SetMiscLocalization{
 ----------------------
 L= DBM:GetModLocalization(709)
 
+L:SetOptionLocalization({
+	SoundDD				= "语音警告：$spell:131996",
+	SoundWOP			= "语音警告：重要技能"
+})

@@ -1,5 +1,7 @@
-local mod	= DBM:NewMod(689, "DBM-MogushanVaults", nil, 317)
+﻿local mod	= DBM:NewMod(689, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
+local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndWOPD	= mod:NewSound(nil, "SoundWOP", true)
 
 mod:SetRevision(("$Revision: 7949 $"):sub(12, -3))
 mod:SetCreatureID(60009)--60781 Soul Fragment
@@ -54,26 +56,26 @@ local warnNullBarrior				= mod:NewSpellAnnounce(115817, 2)
 --Nature/Fist
 local specWarnLightningLash			= mod:NewSpecialWarningStack(131788, mod:IsTank(), 3)
 local specWarnLightningLashOther	= mod:NewSpecialWarningTarget(131788, mod:IsTank())
-local specWarnEpicenter				= mod:NewSpecialWarningRun(116018, nil, nil, nil, true)
+local specWarnEpicenter				= mod:NewSpecialWarning("specWarnEpicenter")
 
 --Fire/Spear
 local specWarnFlamingSpear			= mod:NewSpecialWarningStack(116942, mod:IsTank(), 3)
 local specWarnFlamingSpearOther		= mod:NewSpecialWarningTarget(116942, mod:IsTank())
 local specWarnWildSpark				= mod:NewSpecialWarningYou(116784)
 local specWarnWildfire				= mod:NewSpecialWarningMove(116793)
-local specWarnDrawFlame				= mod:NewSpecialWarningSpell(116711, nil, nil, nil, true)
+local specWarnDrawFlame				= mod:NewSpecialWarning("specWarnDrawFlame")
 
 --Arcane/Staff
 local specWarnArcaneShock			= mod:NewSpecialWarningStack(131790, mod:IsTank(), 3)
 local specWarnArcaneShockOther		= mod:NewSpecialWarningTarget(131790, mod:IsTank())
 local specWarnArcaneResonance		= mod:NewSpecialWarningYou(116417)
 local yellArcaneResonance			= mod:NewYell(116417)
-local specWarnArcaneVelocity		= mod:NewSpecialWarningSpell(116364, nil, nil, nil, true)
+local specWarnArcaneVelocity		= mod:NewSpecialWarning("specWarnArcaneVelocity")
 
 --Shadow/Shield (Heroic Only)
 local specWarnShadowBurn			= mod:NewSpecialWarningStack(131792, mod:IsTank(), 3)
 local specWarnShadowBurnOther		= mod:NewSpecialWarningTarget(131792, mod:IsTank())
-local specWarnSiphoningShield		= mod:NewSpecialWarningSpell(117203)
+local specWarnSiphoningShield		= mod:NewSpecialWarning("specWarnSiphoningShield")
 
 --Tank Abilities
 local specWarnNullBarrior			= mod:NewSpecialWarningSpell(115817) -- Null Barrier is important all members, espcially Earth and Arcane Phase.
@@ -103,7 +105,7 @@ local timerArcaneVelocity			= mod:NewCastTimer(8, 116364)
 local timerShadowBurn				= mod:NewTargetTimer(20, 131792, nil, mod:IsTank())
 local timerShadowBurnCD				= mod:NewCDTimer(9, 131792, nil, mod:IsTank())
 local timerChainsOfShadowCD			= mod:NewCDTimer(6, 118783, nil, false)--6-10sec variation noted
-local timerSiphoningShieldCD		= mod:NewCDCountTimer(45, 117203)--45-50sec variation noted
+local timerSiphoningShieldCD		= mod:NewCDCountTimer(38, 117203)--45-50sec variation noted
 
 --Tank Abilities
 local timerReversalLightningFists	= mod:NewBuffFadesTimer(20, 118302)
@@ -111,7 +113,7 @@ local timerNullBarrior				= mod:NewBuffFadesTimer(6, 115817)
 local timerNullBarriorCD			= mod:NewCDTimer(55, 115817)
 
 
-local soundEpicenter				= mod:NewSound(116018)
+--local soundEpicenter				= mod:NewSound(116018)
 
 local phase = 0
 local wildfireCount = 0
@@ -119,6 +121,23 @@ local sparkCount = 0
 local fragmentCount = 5
 local specialCount = 0
 local arcaneResonanceTargets = {}
+
+local AVPlayer = false
+local AVend = false
+mod:AddBoolOption("InfoFrame", not mod:IsDps(), "sound")
+
+mod:AddBoolOption("HudMAP", true, "sound")
+mod:AddBoolOption("HudMAP2", true, "sound")
+mod:AddBoolOption("HudMAP3", true, "sound")
+local DBMHudMap = DBMHudMap
+local free = DBMHudMap.free
+local function register(e)	
+	DBMHudMap:RegisterEncounterMarker(e)
+	return e
+end
+local WildSparkPrisonMarkers = {}
+local arcaneResonanceMarkers = {}
+local NullBarriorMarkers = {}
 
 local function warnWildfire()
 	warnWildfireInfusion:Cancel()
@@ -136,25 +155,54 @@ function mod:OnCombatStart(delay)
 	sparkCount = 0
 	specialCount = 0
 	table.wipe(arcaneResonanceTargets)
+	table.wipe(WildSparkPrisonMarkers)
+	table.wipe(arcaneResonanceMarkers)
+	table.wipe(NullBarriorMarkers)
+	AVPlayer = false
+	AVend = false
 end
 
+function mod:OnCombatEnd()
+	if self.Options.InfoFrame then
+		DBM.InfoFrame:Hide()
+	end
+	if self.Options.HudMAP or self.Options.HudMAP2 or self.Options.HudMAP3 then
+		DBMHudMap:FreeEncounterMarkers()
+	end
+end
 function mod:SPELL_AURA_APPLIED(args)
 	if args:IsSpellID(131788) then
 		warnLightningLash:Show(args.destName, 1)
 		timerLightningLash:Start(args.destName)
 		timerLightningLashCD:Start()
+		if mod.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader(GetSpellInfo(131788))
+			DBM.InfoFrame:Show(3, "playerdebuffstacks", 131788)
+		end
 	elseif args:IsSpellID(116942) then
 		warnFlamingSpear:Show(args.destName, 1)
 		timerFlamingSpear:Start(args.destName)
 		timerFlamingSpearCD:Start()
+		if mod.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader(GetSpellInfo(116942))
+			DBM.InfoFrame:Show(3, "playerdebuffstacks", 116942)
+		end
 	elseif args:IsSpellID(131790) then
 		warnArcaneShock:Show(args.destName, 1)
 		timerArcaneShock:Start(args.destName)
 		timerArcaneShockCD:Start()
+		if mod.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader(GetSpellInfo(131790))
+			DBM.InfoFrame:Show(3, "playerdebuffstacks", 131790)
+		end
 	elseif args:IsSpellID(131792) then
 		warnShadowBurn:Show(args.destName, 1)
 		timerShadowBurn:Start(args.destName)
 		timerShadowBurnCD:Start()
+		if mod.Options.InfoFrame then
+			DBM.InfoFrame:SetHeader(GetSpellInfo(131792))
+			DBM.InfoFrame:Show(3, "playerdebuffstacks", 131792)
+		end
 	elseif args:IsSpellID(118302) then
 		warnReversalLightningFists:Show(args.destName)
 		timerReversalLightningFists:Start()
@@ -165,12 +213,22 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnWildSpark:Show()
 			yellWildSpark:Yell()
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_hydn.mp3") --火焰點你
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
+			sndWOP:Schedule(2.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+			sndWOP:Schedule(3.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+			sndWOP:Schedule(4.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
+		end
+		if self.Options.HudMAP then
+			local spelltext = GetSpellInfo(116784)
+			WildSparkPrisonMarkers[args.destName] = register(DBMHudMap:PlaceRangeMarkerOnPartyMember("targeting", args.destName, 3, 6, 1, 0 ,0 ,0.8):SetLabel(spelltext))
 		end
 	elseif args:IsSpellID(116711) then
 		sparkCount = 0
 		specialCount = specialCount + 1
 		warnDrawFlame:Show(specialCount)
-		specWarnDrawFlame:Show()
+		specWarnDrawFlame:Show(specialCount)
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_qyhy.mp3") --牽引火焰
 	elseif args:IsSpellID(116821) then
 		wildfireCount = 1
 		warnWildfire()
@@ -183,12 +241,29 @@ function mod:SPELL_AURA_APPLIED(args)
 		if args:IsPlayer() then
 			specWarnArcaneResonance:Show()
 			yellArcaneResonance:Yell()
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runout.mp3") --離開人群
+			AVPlayer = true
+		end
+		if self.Options.HudMAP2 then
+			if args:IsPlayer() then
+				arcaneResonanceMarkers[args.destName] = register(DBMHudMap:PlaceRangeMarkerOnPartyMember("highlight", args.destName, 7, nil, 0, 1, 0, 0.4):Appear():RegisterForAlerts():Rotate(360, 3))
+			else
+				arcaneResonanceMarkers[args.destName] = register(DBMHudMap:PlaceRangeMarkerOnPartyMember("highlight", args.destName, 7, nil, 0, 1, 0, 0.8):Appear():RegisterForAlerts():Rotate(360, 3))
+			end
 		end
 	elseif args:IsSpellID(116364) then
 		specialCount = specialCount + 1
 		warnArcaneVelocity:Show(specialCount)
-		specWarnArcaneVelocity:Show()
+		specWarnArcaneVelocity:Show(specialCount)
 		timerArcaneVelocity:Start()
+		if not AVPlayer then
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\gather.mp3")--快集合
+			sndWOP:Schedule(6, "Interface\\AddOns\\DBM-Core\\extrasounds\\scattersoon.mp3")--注意分散
+		else
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_mfdd.mp3")--秘法動蕩
+		end
+		AVend = true
+		self:Schedule(2, function() AVend = false end)
 	end
 end
 
@@ -259,11 +334,31 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerEpicenter:Cancel()--Epicenter can be removed by Lightning Fists (tank can steal). So added remove stuff.
 	elseif args:IsSpellID(116784) then
 		timerWildSpark:Cancel(args.destName)
+		if args:IsPlayer() then
+			sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
+			sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+			sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+			sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
+		end
+		if WildSparkPrisonMarkers[args.destName] then
+			WildSparkPrisonMarkers[args.destName] = free(WildSparkPrisonMarkers[args.destName])
+		end
 	elseif args:IsSpellID(116711) then
 		timerDrawFlameCD:Start(nil, specialCount + 1)
 	elseif args:IsSpellID(116364) then
 		timerArcaneVelocity:Cancel()
 		timerArcaneVelocityCD:Start(nil, specialCount + 1)
+	elseif args:IsSpellID(116417) then
+		if args:IsPlayer() then
+			AVPlayer = false
+			if AVend then
+				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\gather.mp3")--快集合
+				sndWOP:Schedule(5, "Interface\\AddOns\\DBM-Core\\extrasounds\\scattersoon.mp3")--注意分散
+			end
+		end
+		if arcaneResonanceMarkers[args.destName] then
+			arcaneResonanceMarkers[args.destName] = free(arcaneResonanceMarkers[args.destName])
+		end
 	end
 end
 
@@ -271,13 +366,19 @@ function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(116018) then
 		specialCount = specialCount + 1
 		warnEpicenter:Show(specialCount)
-		specWarnEpicenter:Show()
-		soundEpicenter:Play()
+		specWarnEpicenter:Show(specialCount)
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_yldz.mp3") --遠離地震
+--		soundEpicenter:Play()
 		timerEpicenter:Start()
+		sndWOPD:Schedule(6.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
+		sndWOPD:Schedule(7.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+		sndWOPD:Schedule(8.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+		sndWOPD:Schedule(9.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
 		timerEpicenterCD:Start(nil, specialCount + 1)
 	elseif args:IsSpellID(116157) then
 		warnLightningFists:Show()
 		timerLightningFistsCD:Start()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_zydb.mp3") --注意電波
 	end
 end
 
@@ -288,6 +389,10 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args:IsSpellID(115817) then
 		warnNullBarrior:Show()
 		specWarnNullBarrior:Show()
+		local spelltext = GetSpellInfo(115817)
+		if self.Options.HudMAP3 then
+			NullBarriorMarkers[args.sourceName] = register(DBMHudMap:PlaceRangeMarkerOnPartyMember("highlight", args.sourceName, 5, 5, 0, 1, 0, 0.8):RegisterForAlerts(true, spelltext))
+		end
 		timerNullBarrior:Start()
 		if self:IsDifficulty("lfr25") then
 			timerNullBarriorCD:Start(25)
@@ -300,6 +405,7 @@ end
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 	if spellId == 116793 and destGUID == UnitGUID("player") and self:AntiSpam(3, 3) then
 		specWarnWildfire:Show()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runaway.mp3")--快躲開
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
@@ -323,11 +429,13 @@ function mod:OnSync(msg)
 		timerLightningLashCD:Start(7)
 		timerLightningFistsCD:Start(12)
 		timerEpicenterCD:Start(18, 1)--It's either this, or this +10. Not yet sure what causes the +10
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_zrxt.mp3") --自然形态
 	elseif msg == "Flame" then
 		phase = phase + 1
 		warnPhase:Show(phase)
 		timerFlamingSpearCD:Start(5.5)
 		timerDrawFlameCD:Start(35, 1)--No variation, or not enough logs of fire phase.
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_hyxt.mp3") --火焰形态
 	elseif msg == "Purple" then
 		phase = phase + 1
 		warnPhase:Show(phase)
@@ -336,12 +444,14 @@ function mod:OnSync(msg)
 		-- 10/13 01:11:36.671  SPELL_CAST_SUCCESS,0xF150EA690000478E,"",0x10a48,0x0,0x0000000000000000,nil,0x80000000,0x80000000,116417,"",0x40
 		timerArcaneResonanceCD:Start(12)
 		timerArcaneVelocityCD:Start(16.5, 1)--It's either this, or this +10. Not yet sure what causes the +10
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_mfxt.mp3") --秘法形态
 	elseif msg == "Dark" then
 		phase = phase + 1
 		warnPhase:Show(phase)
 		timerSiphoningShieldCD:Start(4, 1)--either this, or this +5. Not yet sure what causes the +5
 		timerChainsOfShadowCD:Start(6)
 		timerShadowBurnCD:Start(9)--9-11 variation
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_ayxt.mp3") --暗影形態
 	end
 end
 
@@ -349,8 +459,14 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 117203 and self:AntiSpam(2, 1) then--Siphoning Shield
 		specialCount = specialCount + 1
 		warnSiphoningShield:Show(specialCount)
-		specWarnSiphoningShield:Show()
+		specWarnSiphoningShield:Show(specialCount)
 		timerSiphoningShieldCD:Start(nil, specialCount + 1)
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_yldp.mp3") --遠離盾牌
+		sndWOP:Schedule(1.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
+		sndWOP:Schedule(2.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+		sndWOP:Schedule(3.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+		sndWOP:Schedule(4.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
+		sndWOP:Schedule(5, "Interface\\AddOns\\DBM-Core\\extrasounds\\killspirit.mp3") --靈魂快打
 	elseif spellId == 121631 and self:AntiSpam(2, 2) then--Draw Essence.
 		--Best place to cancel timers, vs duplicating cancel code in all 4 yells above.
 		specialCount = 0
@@ -365,5 +481,10 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		timerShadowBurnCD:Cancel()
 		timerSiphoningShieldCD:Cancel()
 		timerChainsOfShadowCD:Cancel()
+		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\scattersoon.mp3")
+		sndWOPD:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
+		sndWOPD:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+		sndWOPD:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+		sndWOPD:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
 	end
 end

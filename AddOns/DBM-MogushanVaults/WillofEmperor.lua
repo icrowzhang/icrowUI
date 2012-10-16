@@ -1,7 +1,14 @@
-local mod	= DBM:NewMod(677, "DBM-MogushanVaults", nil, 317)
+﻿local mod	= DBM:NewMod(677, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
+local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndADD1A	= mod:NewSound(nil, "SoundADD1A", mod:IsDps())
+local sndADD1	= mod:NewSound(nil, "SoundADD1", mod:IsDps())
+local sndADD2A	= mod:NewSound(nil, "SoundADD2A", mod:IsDps())
+local sndADD2	= mod:NewSound(nil, "SoundADD2", mod:IsDps())
+local sndADD3A	= mod:NewSound(nil, "SoundADD3A", mod:IsDps())
+local sndADD3	= mod:NewSound(nil, "SoundADD3", mod:IsDps())
 
-mod:SetRevision(("$Revision: 7953 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7956 $"):sub(12, -3))
 mod:SetCreatureID(60399, 60400)--60396 (Rage), 60397 (Strength), 60398 (Courage), 60480 (Titan Spark), 60399 (Qin-xi), 60400 (Jan-xi)
 mod:SetModelID(41391)
 mod:SetZone()
@@ -12,6 +19,7 @@ mod:SetMinCombatTime(25)
 
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED",
+	"SPELL_AURA_REMOVED",
 	"UNIT_SPELLCAST_SUCCEEDED",
 	"CHAT_MSG_MONSTER_YELL",
 	"UNIT_DIED",
@@ -70,17 +78,22 @@ local timerTitanGasCD			= mod:NewNextCountTimer(150, 116779)
 
 mod:AddBoolOption("InfoFrame", false)
 
+mod:AddDropdownOption("optBY", {"tarfoc", "Janxi", "Qinxi", "none"}, "tarfoc", "sound")
+
 local comboWarned = false
 local sparkCount = 0
 local comboCount = 0
 local titanGasCast = 0
 local focusedAssault = GetSpellInfo(116525)
 
+local Isstomp = 0
+
 function mod:OnCombatStart(delay)
 	comboWarned = false
 	sparkCount = 0
 	comboCount = 0
 	titanGasCast = 0
+	Isstomp = 0
 	timerBossesActivates:Start(-delay)--Still start here to give perspective
 	timerCourageActivates:Start(75-delay)
 	timerTitanGasCD:Start(221-delay, 1)
@@ -106,6 +119,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnFocusedDefense:Show(args.destName)
 		if args:IsPlayer() then
 			specWarnFocusedDefense:Show()
+			if not mod:IsTank() then
+				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\justrun.mp3") --快跑
+			end
 		end
 	elseif args:IsSpellID(116829) then
 		warnFocusedEnergy:Show(args.destName)
@@ -115,9 +131,19 @@ function mod:SPELL_AURA_APPLIED(args)
 	end
 end
 
+function mod:SPELL_AURA_REMOVED(args)
+	if args:IsSpellID(116778) then
+		if args:IsPlayer() then
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\safenow.mp3") --安全
+		end
+	end
+end
+
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if msg == L.Rage or msg:find(L.Rage) then
 		warnRageActivated:Schedule(11)
+		sndADD1A:Schedule(5, "Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_qjbzb.mp3") --輕甲
+		sndADD1:Schedule(10, "Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_qjbcx.mp3")
 		timerRageActivates:Start()--They actually spawn 11 seconds after yell
 	end
 end
@@ -125,20 +151,26 @@ end
 function mod:RAID_BOSS_EMOTE(msg)
 	if msg == L.Strength or msg:find(L.Strength) then
 		warnStrengthActivated:Schedule(9)
+		sndADD3A:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_zjbzb.mp3") --重甲
+		sndADD3:Schedule(8, "Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_zjbcx.mp3")
 		specWarnStrengthActivated:Schedule(9)
 		timerStrengthActivates:Start()--They actually spawn 10 seconds after emote
 	elseif msg == L.Courage or msg:find(L.Courage) then
 		warnCourageActivated:Schedule(10)
 		specWarnCourageActivated:Schedule(10)
+--		timerCourageActivates:Update()--They actually spawn 10 seconds after emote
 		if timerCourageActivates:GetTime() > 80 then--First timer
 			timerCourageActivates:Update(105, 115)
 		else--first timer
 			timerCourageActivates:Update(65, 75)
 		end
+		sndADD2A:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_dbzb.mp3") --盾兵
+		sndADD2:Schedule(8, "Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_dbkd.mp3")
 	elseif msg == L.Boss or msg:find(L.Boss) then
 		warnBossesActivated:Schedule(10)
 		specWarnBossesActivated:Schedule(10)
 		timerBossesActivates:Update(99, 109)
+		sndWOP:Schedule(8, "Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_szcz.mp3") --雙子
 	elseif msg:find("spell:116779") then
 		timerCourageActivates:Start(105)--Resets timer
 		if self:IsDifficulty("heroic10", "heroic25") then--On heroic the boss activates this perminantly on pull and it's always present
@@ -149,7 +181,8 @@ function mod:RAID_BOSS_EMOTE(msg)
 			titanGasCast = titanGasCast + 1
 			warnTitanGas:Show(titanGasCast)
 			specWarnTitanGas:Show()
-			if titanGasCast < 4 then -- after Titan Gas casted 4 times, Titan Gas lasts permanently. (soft enrage)
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_ttqt.mp3") --泰坦氣體
+			if titanGasCast < 4 then -- after Titan Gas casted 3 times, Titan Gas lasts permanently. (soft enrage)
 				timerTitanGas:Start()
 				timerTitanGasCD:Start(150, titanGasCast+1)
 			end
@@ -157,24 +190,113 @@ function mod:RAID_BOSS_EMOTE(msg)
 	end
 end
 
+function chooseboss(BuId)
+	if mod.Options.optBY == "tarfoc" and (BuId ~= "target") and (BuId ~= "focus") then
+		return false
+	elseif mod.Options.optBY == "Janxi" and (UnitName(BuId) ~= UnitName("boss2")) then
+		return false
+	elseif mod.Options.optBY == "Qinxi" and (UnitName(BuId) ~= UnitName("boss1")) then
+		return false
+	elseif mod.Options.optBY == "none" then
+		return false
+	else
+		return true
+	end
+end
+
+function checkisstomp()
+	if mod:IsDps() then
+		sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+		sndWOP:Schedule(2, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
+	end
+	mod:Schedule(2, function() Isstomp = 0 end)
+	mod:Schedule(4, function() 
+		if Isstomp ~= 1 and comboCount ~= 0 then
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_jt.mp3") --踐踏
+		end
+	end)
+end
+
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 116556 and uId == "target" then
 		warnEnergizingSmash:Show()
-	elseif spellId == 116968 and self:AntiSpam(2, 1) then--Arc Left
+--[[	elseif spellId == 117746 then--Spark Spawning
+		self:SendSync("SparkSpawned")--]]
+	end
+	if (not chooseboss(uId)) then return end
+	if spellId == 116968 and self:AntiSpam(2, 1) then--Arc Left
+		Isstomp = 1
 		comboCount = comboCount + 1
+		checkisstomp()
 		warnArcLeft:Show(comboCount)
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_left.mp3") --左側
+		if mod:IsHealer() then
+			if comboCount == 5 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfive.mp3")
+			end
+			if comboCount == 4 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
+			end
+			if comboCount == 3 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+			end
+			if comboCount == 2 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+			end
+			if comboCount == 1 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
+			end
+		end
 	elseif spellId == 116971 and self:AntiSpam(2, 2) then--Arc Right
+		Isstomp = 1
 		comboCount = comboCount + 1
+		checkisstomp()
 		warnArcRight:Show(comboCount)
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_right.mp3") --右側
+		if mod:IsHealer() then
+			if comboCount == 5 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfive.mp3")
+			end
+			if comboCount == 4 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
+			end
+			if comboCount == 3 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+			end
+			if comboCount == 2 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+			end
+			if comboCount == 1 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
+			end
+		end
 	elseif spellId == 116972 and self:AntiSpam(2, 3) then--Arc Center
+		Isstomp = 1
 		comboCount = comboCount + 1
+		checkisstomp()
 		warnArcCenter:Show(comboCount)
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_center.mp3") --前方
+--		specWarnArcCenter:Show()
+		if mod:IsHealer() then
+			if comboCount == 5 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfive.mp3")
+			end
+			if comboCount == 4 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
+			end
+			if comboCount == 3 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+			end
+			if comboCount == 2 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+			end
+			if comboCount == 1 then
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
+			end
+		end
 	elseif (spellId == 116969 or spellId == 132425) and self:AntiSpam(2, 4) then--Stomp
 		comboCount = comboCount + 1
 		warnStomp:Show(comboCount)
---[[	--Some untested heroic spark code that needs more work
-	elseif spellId == 117746 then--Spark Spawning
-		self:SendSync("SparkSpawned")--]]
 	end
 end
 
@@ -213,9 +335,11 @@ end--]]
 -- also timerComboCD is not be fixed. their mana increases 1 or 2 randomly every boss's melee attacks.
 -- 
 function mod:UNIT_POWER(uId)
+	if (not chooseboss(uId)) then return end
 	if (self:GetUnitCreatureId(uId) == 60399 or self:GetUnitCreatureId(uId) == 60400) and UnitPower(uId) == 18 and not comboWarned then
 		comboWarned = true
 		specWarnCombo:Show()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_zbbyz.mp3") --準備半月斬
 	elseif (self:GetUnitCreatureId(uId) == 60399 or self:GetUnitCreatureId(uId) == 60400) and UnitPower(uId) == 1 then
 		comboWarned = false
 		comboCount = 0

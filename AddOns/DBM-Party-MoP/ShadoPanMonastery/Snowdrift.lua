@@ -1,11 +1,11 @@
-local mod	= DBM:NewMod(657, "DBM-Party-MoP", 3, 312)
+﻿local mod	= DBM:NewMod(657, "DBM-Party-MoP", 3, 312)
 local L		= mod:GetLocalizedStrings()
+local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
-mod:SetRevision(("$Revision: 7890 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 7886 $"):sub(12, -3))
 mod:SetCreatureID(56541)
 mod:SetModelID(39887)
 mod:SetZone()
-mod:SetMinSyncRevision(7888)
 
 -- pre-bosswave. Novice -> Black Sash (Fragrant Lotus, Flying Snow). this runs automaticially.
 -- maybe we need Black Sash wave warns.
@@ -19,14 +19,13 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED"
 )
 
---[[
 mod:RegisterEvents(
-	"CHAT_MSG_MONSTER_YELL"
+	"CHAT_MSG_MONSTER_YELL",
+	"RAID_BOSS_WHISPER"
 )
---]]
 
 --Chi blast warns very spammy. and not useful.
---local warnRemainingNovice	= mod:NewAnnounce("warnRemainingNovice", 2, 122863, false)
+local warnRemainingNovice	= mod:NewAnnounce("warnRemainingNovice", 2, 122863, false)
 local warnFistsOfFury		= mod:NewSpellAnnounce(106853, 3)
 local warnTornadoKick		= mod:NewSpellAnnounce(106434, 3)
 local warnPhase2			= mod:NewPhaseAnnounce(2)
@@ -44,12 +43,10 @@ local timerChaseDown		= mod:NewTargetTimer(11, 118961)
 
 local phase = 1
 local remainingNovice = 20
---local diedNovice = {}
 
 function mod:OnCombatStart(delay)
 	phase = 1
---	self:UnregisterShortTermEvents()
---	table.wipe(diedNovice)
+	self:UnregisterShortTermEvents()
 end
 
 function mod:SPELL_AURA_APPLIED(args)
@@ -74,25 +71,30 @@ function mod:SPELL_CAST_START(args)
 		warnFistsOfFury:Show()
 		specWarnFists:Show()
 		timerFistsOfFuryCD:Start()
+		if mod:IsTank() then
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runaway.mp3")--快躲開
+		end
 	elseif args:IsSpellID(106434) then
 		warnTornadoKick:Show()
 		timerTornadoKickCD:Start()
 	end
 end
 
---[[
 function mod:CHAT_MSG_MONSTER_YELL(msg)
-	if msg == L.NovicesPulled or msg:find(L.NovicesPulled) then
-		self:SendSync("NovicesStart")
-	elseif msg == L.NovicesDefeated or msg:find(L.NovicesDefeated) then
+	if msg == L.NovicesDefeated or msg:find(L.NovicesDefeated) then
 		self:SendSync("NovicesEnd")
+	end
+end
+
+function mod:RAID_BOSS_WHISPER(msg)
+	if msg:find("spell:106774") then--May not be accurate at higher dps levels, this does NOT fire when event starts, it fires when a mob chooses you specificly for it's fixate, if 5th spawned mob chooses you, 1st mob could already be dead
+		self:SendSync("NovicesStart")
 	end
 end
 
 function mod:OnSync(msg)
 	if msg == "NovicesStart" then
 		remainingNovice = 20
-		table.wipe(diedNovice)
 		self:RegisterShortTermEvents(
 			"SPELL_DAMAGE",
 			"SWING_DAMAGE",
@@ -101,17 +103,14 @@ function mod:OnSync(msg)
 		)
 	elseif msg == "NovicesEnd" then
 		self:UnregisterShortTermEvents()
-		table.wipe(diedNovice)
 	end
 end
-
 
 function mod:SWING_DAMAGE(_, _, _, _, destGUID, _, _, _, _, overkill)
 	if (overkill or 0) > 0 then -- prevent to waste cpu. only pharse cid when event have overkill parameter.
 		local cid = self:GetCIDFromGUID(destGUID)
-		if cid == 56395 and not diedNovice[destGUID] then--Hack for mobs that don't fire UNIT_DIED event.
+		if cid == 56395 then--Hack for mobs that don't fire UNIT_DIED event.
 			remainingNovice = remainingNovice - 1
-			diedNovice[destGUID] = true
 			warnRemainingNovice:Show(remainingNovice)
 		end
 	end
@@ -120,24 +119,24 @@ end
 function mod:SPELL_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId, _, _, _, overkill)
 	if (overkill or 0) > 0 then -- prevent to waste cpu. only pharse cid when event have overkill parameter.
 		local cid = self:GetCIDFromGUID(destGUID)
-		if cid == 56395 and not diedNovice[destGUID] then--Hack for mobs that don't fire UNIT_DIED event.
+		if cid == 56395 then--Hack for mobs that don't fire UNIT_DIED event.
 			remainingNovice = remainingNovice - 1
-			diedNovice[destGUID] = true
 			warnRemainingNovice:Show(remainingNovice)
 		end
 	end
 end
 mod.SPELL_PERIODIC_DAMAGE = mod.SPELL_DAMAGE
 mod.RANGE_DAMAGE = mod.SPELL_DAMAGE
---]]
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 110324 and self:AntiSpam(2) then
 		phase = phase + 1
 		if phase == 2 then
 			warnPhase2:Show()
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\phasechange.mp3")
 		elseif phase == 3 then
 			warnPhase3:Show()
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\phasechange.mp3")
 		end
 		timerFistsOfFuryCD:Cancel()
 		timerTornadoKickCD:Cancel()

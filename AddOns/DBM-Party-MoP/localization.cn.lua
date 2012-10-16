@@ -1,7 +1,8 @@
 ﻿-- Simplified Chinese by Diablohu(diablohudream@gmail.com)
--- Last update: 10/11/2012
+-- Last update: 9/29/2012
 
 if GetLocale() ~= "zhCN" then return end
+
 local L
 
 -----------------------
@@ -13,7 +14,8 @@ local L
 L= DBM:GetModLocalization(672)
 
 L:SetOptionLocalization({
-	SetIconOnAdds	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej5616")
+	SetIconOnAdds	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format("ej5616"),
+	SoundWOP			= "语音警告：重要技能"
 })
 
 -----------------------
@@ -26,6 +28,7 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能",
 	SpecWarnIntensity	= DBM_CORE_AUTO_SPEC_WARN_OPTIONS["stack"]:format(6, 113315)
 })
 
@@ -34,10 +37,18 @@ L:SetOptionLocalization({
 -----------------------
 L= DBM:GetModLocalization(658)
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------
 -- Sha of Doubt --
 -----------------------
 L= DBM:GetModLocalization(335)
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
 
 -----------------------
 -- <<<Stormstout Brewery>>> --
@@ -47,23 +58,36 @@ L= DBM:GetModLocalization(335)
 -----------------------
 L= DBM:GetModLocalization(668)
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------
 -- Hoptallus --
 -----------------------
 L= DBM:GetModLocalization(669)
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
+L:SetMiscLocalization({
+	Tuzi				= "跳跳大王大声呼喊！兔妖来了！"
+})
 
 -----------------------
 -- Yan Zhu the Uncasked --
 -----------------------
 L= DBM:GetModLocalization(670)
 
-L:SetWarningLocalization({
-	SpecWarnFizzyBubbles	= "接触气泡！"
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能",
+	SpecWarnFizzyBubbles	= "特别警告：缺少$spell:114459",
+	RangeFrame				= "距离监视(10码)：$spell:106546"
 })
 
-L:SetOptionLocalization({
-	SpecWarnFizzyBubbles	= "特殊警报：当你没有受到$spell:114459效果影响时",
-	RangeFrame				= "距离监视（10码）：$spell:106546"
+L:SetWarningLocalization({
+	SpecWarnFizzyBubbles	= "去拿泡泡飞起来!"
 })
 
 -----------------------
@@ -73,6 +97,10 @@ L:SetOptionLocalization({
 -- Gu Cloudstrike --
 -----------------------
 L= DBM:GetModLocalization(673)
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
 
 -----------------------
 -- Snowdrift --
@@ -84,12 +112,13 @@ L:SetWarningLocalization({
 })
 
 L:SetOptionLocalization({
-	warnRemainingNovice	= "警报：学徒剩余数量"
+	warnRemainingNovice	= "警报：学徒剩余数量",
+	SoundWOP			= "语音警告：重要技能"
 })
 
 L:SetMiscLocalization({
-	NovicesPulled	= "是你们！这么多年了，是你们又让煞再次苏醒！",
-	NovicesDefeated = "你们只是击败了我最年轻的学徒而已。接下来是我的两位得意门生。",
+--	NovicesPulled	= "You!  You have allowed the Sha to reawaken after all these years!",
+	NovicesDefeated = "You have bested our most junior of students.  Now you will face two of my most senior.",
 --	Defeat			= "I am bested.  Give me a moment and we will venture forth together to face the Sha."
 })
 
@@ -98,13 +127,18 @@ L:SetMiscLocalization({
 -----------------------
 L= DBM:GetModLocalization(685)
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------
 -- Taran Zhu --
 -----------------------
 L= DBM:GetModLocalization(686)
 
 L:SetOptionLocalization({
-	InfoFrame			= "信息框：$journal:5827"
+	SoundWOP			= "语音警告：重要技能",
+	InfoFrame			= "资讯框：$journal:5827"
 })
 
 -----------------------
@@ -116,7 +150,8 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(655)
 
 L:SetOptionLocalization({
-	IconOnSabotage	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(107268)
+	IconOnSabotage	= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(107268),
+	SoundWOP			= "语音警告：重要技能"
 })
 
 -------------
@@ -125,7 +160,11 @@ L:SetOptionLocalization({
 L= DBM:GetModLocalization(675)
 
 L:SetMiscLocalization({
-	StaffingRun		= "Striker Ga'dok prepares to make a strafing run!"
+	StaffingRun		= "突袭者加杜卡准备发动一次扫射！"
+})
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
 })
 
 -----------------------
@@ -133,10 +172,24 @@ L:SetMiscLocalization({
 -----------------------
 L= DBM:GetModLocalization(676)
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------------
 -- Raigonn --
 -----------------------------
 L= DBM:GetModLocalization(649)
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
+L:SetMiscLocalization({
+	Kkxka		= "科里克提克虫群使者",
+	Kkxkb		= "科里克提克捍卫者",
+	Kkxkc		= "科里克提克吞噬者"
+})
 
 -----------------------
 -- <<<Mogu'Shan Palace>>> --
@@ -147,11 +200,15 @@ L= DBM:GetModLocalization(649)
 L= DBM:GetModLocalization(708)
 
 L:SetMiscLocalization({
-	Pull		= "废物！你们信誓旦旦地表忠心，却连这些低等生物都赶不出我的宫殿。",
+	Pull		= "Useless, all of you! Even the guards you give me in tribute can't keep these lesser beings from my palace.",
 	Kuai		= "格尔桑氏族会向王上和其他像你们这样利欲熏心的骗子证明，我们才是王上真正的拥护者！",
 	Ming		= "哈飒克氏族会向所有人证明，我们才是血统最纯正的魔古！",
 	Haiyan		= "克尔格西氏族会让你知道，为什么只有强者才配站在我们国王的身边！",
 	Defeat		= "谁让外人闯进大厅的？只有哈飒克或克尔格西氏族才会干出这种叛逆的行径！"
+})
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
 })
 
 -----------------------
@@ -159,10 +216,18 @@ L:SetMiscLocalization({
 -----------------------
 L= DBM:GetModLocalization(690)
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------
 -- Weaponmaster Xin --
 -----------------------
 L= DBM:GetModLocalization(698)
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
 
 -----------------------
 -- <<<Siege of Niuzao Temple>>> --
@@ -172,21 +237,27 @@ L= DBM:GetModLocalization(698)
 -----------------------
 L= DBM:GetModLocalization(693)
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------
 -- Vo'jak --
 -----------------------
 L= DBM:GetModLocalization(738)
 
 L:SetTimerLocalization({
-	TimerWave	= "下一批敌人：%s"
+	TimerWave	= "开始进攻: %s"
 })
 
 L:SetOptionLocalization({
-	TimerWave	= "计时条：下一批敌人"
+	TimerWave	= "计时器：下一波小怪",
+	SoundWOP	= "语音警告：重要技能"
 })
 
 L:SetMiscLocalization({
-	WaveStart	= "Fools! Attacking the might of the mantid head on?  Your deaths will be swift."
+	WaveStart		= "蠢货！竟敢正面挑战强大的螳螂妖？你会死得很快的。",
+	Mob			= "加入了战斗。"
 })
 
 -----------------------
@@ -194,10 +265,27 @@ L:SetMiscLocalization({
 -----------------------
 L= DBM:GetModLocalization(692)
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------
 -- Neronok --
 -----------------------
 L= DBM:GetModLocalization(727)
+
+L:SetMiscLocalization({
+	Fly		= "飞到桥的另一端去了！"
+})
+
+L:SetWarningLocalization({
+	specWarnFly	= "快去另一边!",
+})
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能",
+	specWarnFly			= "特别警告：当首领飞到桥的另一头时"
+})
 
 -----------------------
 -- <<<Scholomance>>> --
@@ -207,10 +295,18 @@ L= DBM:GetModLocalization(727)
 -----------------------
 L= DBM:GetModLocalization(659)
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------
 -- Jandice Barov --
 -----------------------
 L= DBM:GetModLocalization(663)
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
 
 -----------------------
 -- Rattlegore --
@@ -218,22 +314,27 @@ L= DBM:GetModLocalization(663)
 L= DBM:GetModLocalization(665)
 
 L:SetWarningLocalization({
-	SpecWarnGetBoned	= "快去获得骨甲"
+	SpecWarnGetBoned	= "快去拿骨甲!",
 })
 
 L:SetOptionLocalization({
-	SpecWarnGetBoned	= "特殊警报：当你没有受到$spell:113996效果影响时",
-	InfoFrame			= "信息框：没有受到$spell:113996效果影响的玩家"
+	SpecWarnGetBoned	= "特别警告：缺少$spell:113996",
+	InfoFrame			= "信息框： 缺少$spell:113996的团队成员",
+	SoundWOP			= "语音警告：重要技能"
 })
 
 L:SetMiscLocalization({
-	PlayerDebuffs	= "没有骨甲"
+	PlayerDebuffs	= "未获得骨甲"
 })
 
 -----------------------
 -- Lillian Voss --
 -----------------------
 L= DBM:GetModLocalization(666)
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
 
 L:SetMiscLocalization({
 	Kill	= "什么？！"
@@ -244,6 +345,10 @@ L:SetMiscLocalization({
 -----------------------
 L= DBM:GetModLocalization(684)
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------
 -- <<<Scarlet Halls>>> --
 -----------------------
@@ -251,6 +356,10 @@ L= DBM:GetModLocalization(684)
 -- Braun --
 -----------------------
 L= DBM:GetModLocalization(660)
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
 
 -----------------------
 -- Harlan --
@@ -261,10 +370,18 @@ L:SetMiscLocalization({
 	Call		= "武器大师哈兰召唤了两名同伴加入战斗！"
 })
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------
 -- Flameweaver Koegler --
 -----------------------
 L= DBM:GetModLocalization(656)
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
 
 -----------------------
 -- <<<Scarlet Cathedral>>> --
@@ -274,16 +391,26 @@ L= DBM:GetModLocalization(656)
 -----------------------
 L= DBM:GetModLocalization(688)
 
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})
+
 -----------------------
 -- Korlof --
 -----------------------
 L= DBM:GetModLocalization(671)
 
 L:SetOptionLocalization({
-	KickArrow	= "DBM箭头：$spell:114487接近你时",
+	SoundWOP			= "语音警告：重要技能",
+	KickArrow	= "当$spell:114021靠近你时显示DBM箭头",
 })
 
 -----------------------
 -- Durand/High Inquisitor Whitemane --
 -----------------------
 L= DBM:GetModLocalization(674)
+
+
+L:SetOptionLocalization({
+	SoundWOP			= "语音警告：重要技能"
+})

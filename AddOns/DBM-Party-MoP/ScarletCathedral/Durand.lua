@@ -1,5 +1,6 @@
-local mod	= DBM:NewMod(674, "DBM-Party-MoP", 9, 316)
+﻿local mod	= DBM:NewMod(674, "DBM-Party-MoP", 9, 316)
 local L		= mod:GetLocalizedStrings()
+local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
 mod:SetRevision(("$Revision: 7875 $"):sub(12, -3))
 mod:SetCreatureID(60040, 99999)--3977 is High Inquisitor Whitemane and 60040 is Commander Durand, we don't really need to add her ID, because we don't ever engage her, and he true death is at same time as her.
@@ -10,8 +11,7 @@ mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
 	"SPELL_CAST_SUCCESS",
-	"UNIT_SPELLCAST_SUCCEEDED",
-	"UNIT_DIED"
+	"UNIT_SPELLCAST_SUCCEEDED"
 )
 
 --local warnRes					= mod:NewCastAnnounce(111670, 4)--This spell seems to be only found in combatlog. Also, I didn't see any casting bar. (both trashes and bosses). Needs more review for this spell.
@@ -50,9 +50,11 @@ function mod:SPELL_CAST_START(args)
 		warnMassRes:Show()
 		specWarnMassRes:Show(args.sourceName)
 		timerMassResCD:Start()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\kickcast.mp3")--快打斷
 	elseif args:IsSpellID(12039) then
 		warnHeal:Show()
 		specWarnHeal:Show(args.sourceName)
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\kickcast.mp3")--快打斷
 	end
 end
 
@@ -64,6 +66,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 		phase = 3
 		warnDeepSleep:Show()
 		timerDeepSleep:Start()
+		sndWOP:Schedule(5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfive.mp3")
+		sndWOP:Schedule(6, "Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
+		sndWOP:Schedule(7, "Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+		sndWOP:Schedule(8, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+		sndWOP:Schedule(9, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
+		sndWOP:Schedule(10, "Interface\\AddOns\\DBM-Core\\extrasounds\\phasechange.mp3")--階段轉換
 	end
 end
 

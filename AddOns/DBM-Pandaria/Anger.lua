@@ -1,5 +1,6 @@
-local mod	= DBM:NewMod(691, "DBM-Pandaria", nil, 322)	-- 322 = Pandaria/Outdoor I assume
+﻿local mod	= DBM:NewMod(691, "DBM-Pandaria", nil, 322)	-- 322 = Pandaria/Outdoor I assume
 local L		= mod:GetLocalizedStrings()
+local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
 mod:SetRevision(("$Revision: 7887 $"):sub(12, -3))
 mod:SetCreatureID(60491)
@@ -44,6 +45,15 @@ local warnMCTargets = {}
 local mcTargetIcons = {}
 local mcIcon = 8
 local bitterThought = GetSpellInfo(119601)
+
+mod:AddBoolOption("HudMAP", true, "sound")
+local DBMHudMap = DBMHudMap
+local free = DBMHudMap.free
+local function register(e)	
+	DBMHudMap:RegisterEncounterMarker(e)
+	return e
+end
+local MCMarkers = {}
 
 local function debuffFilter(uId)
 	return UnitDebuff(uId, GetSpellInfo(119622))
@@ -104,6 +114,7 @@ end
 function mod:OnCombatStart(delay)
 	table.wipe(warnpreMCTargets)
 	table.wipe(warnMCTargets)
+	table.wipe(MCMarkers)
 	mcIcon = 8
 --	timerUnleashedWrathCD:Start(-delay)
 --	timerGrowingAngerCD:Start(-delay)
@@ -114,12 +125,16 @@ function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
 	end
+	if self.Options.HudMAP then
+		DBMHudMap:FreeEncounterMarkers()
+	end
 end
 
 function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(119488) then
 		warnUnleashedWrath:Show()
 		specWarnUnleashedWrath:Show()
+		sndWOP:Schedule(2, "Interface\\AddOns\\DBM-Core\\extrasounds\\aesoon.mp3") --AE
 		timerUnleashedWrath:Start()
 	elseif args:IsSpellID(119622) then
 		timerGrowingAngerCD:Start()
@@ -138,6 +153,11 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		if args:IsPlayer() then
 			specWarnGrowingAnger:Show()
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\findmc.mp3") --心控
+			sndWOP:Schedule(1.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\runout.mp3")
+			sndWOP:Schedule(3.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+			sndWOP:Schedule(4.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+			sndWOP:Schedule(5.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
 		end
 		self:Unschedule(showpreMC)
 		if #warnpreMCTargets >= 3 then
@@ -145,11 +165,17 @@ function mod:SPELL_AURA_APPLIED(args)
 		else
 			self:Schedule(1.2, showpreMC)
 		end
+		if self.Options.HudMAP then
+			MCMarkers[args.destName] = register(DBMHudMap:PlaceRangeMarkerOnPartyMember("timer", args.destName, 5, nil, 0, 1, 0, 1):Appear():RegisterForAlerts():Rotate(360, 6))
+		end
 	elseif args:IsSpellID(119626) then
 		--Maybe add in function to update icons here in case of a spread that results in more then the original 3 getting the final MC debuff.
 		warnMCTargets[#warnMCTargets + 1] = args.destName
 		self:Unschedule(showMC)
 		self:Schedule(2.5, showMC)--These can be vastly spread out, not even need to use 3, depends on what more data says. As well as spread failures.
+		if MCMarkers[args.destName] then
+			MCMarkers[args.destName] = free(MCMarkers[args.destName])
+		end
 	end
 end
 
@@ -165,5 +191,6 @@ function mod:UNIT_AURA(uId)
 	if uId ~= "player" then return end
 	if UnitDebuff("player", bitterThought) and self:AntiSpam(2) then
 		specWarnBitterThoughts:Show()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runaway.mp3")--快躲開
 	end
 end

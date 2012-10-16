@@ -7,7 +7,9 @@ local L
 L= DBM:GetModLocalization(691)
 
 L:SetOptionLocalization({
-	RangeFrame			= "根據玩家減益顯示動態的距離框以對應$spell:119622",
+	SoundWOP			= "語音警告：重要技能",
+	RangeFrame			= "距離監視：$spell:119622",
+	HudMAP				= "高級定位監視(HUD)：$spell:119622",
 	SetIconOnMC			= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(119622)
 })
 
@@ -16,4 +18,6 @@ L:SetOptionLocalization({
 -----------------------
 L= DBM:GetModLocalization(725)
 
-
+L:SetOptionLocalization({
+	SoundWOP			= "語音警告：重要技能"
+})

@@ -1,5 +1,6 @@
-local mod	= DBM:NewMod(679, "DBM-MogushanVaults", nil, 317)
+﻿local mod	= DBM:NewMod(679, "DBM-MogushanVaults", nil, 317)
 local L		= mod:GetLocalizedStrings()
+local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 
 mod:SetRevision(("$Revision: 7943 $"):sub(12, -3))
 mod:SetCreatureID(60051, 60043, 59915, 60047)--Cobalt: 60051, Jade: 60043, Jasper: 59915, Amethyst: 60047
@@ -25,16 +26,22 @@ local warnCobaltMine				= mod:NewTargetAnnounce(129424, 4)
 local warnJadeShards				= mod:NewSpellAnnounce(116223, 3)
 local warnJasperChains				= mod:NewTargetAnnounce(130395, 4)
 local warnAmethystPool				= mod:NewTargetAnnounce(130774, 3)
+local warnGSD						= mod:NewSpellAnnounce(116008)
+local warnBSD						= mod:NewSpellAnnounce(115861)
+local warnPSD						= mod:NewSpellAnnounce(116060)
+local warnRSD						= mod:NewSpellAnnounce(116038)
 
 local specWarnOverloadSoon			= mod:NewSpecialWarning("SpecWarnOverloadSoon", nil, nil, nil, true)
 local specWarnJasperChains			= mod:NewSpecialWarningYou(130395)
-local specWarnBreakJasperChains		= mod:NewSpecialWarning("specWarnBreakJasperChains", false)
+local specWarnBreakJasperChains		= mod:NewSpecialWarning("specWarnBreakJasperChains")
 local yellJasperChains				= mod:NewYell(130395, nil, false)
 local specWarnCobaltMine			= mod:NewSpecialWarningYou(129424)
 local specWarnCobaltMineNear		= mod:NewSpecialWarningClose(129424)
 local yellCobaltMine				= mod:NewYell(129424)
 local specWarnAmethystPool			= mod:NewSpecialWarningMove(130774)
 local yellAmethystPool				= mod:NewYell(130774, nil, false)
+
+local specWarnMySD					= mod:NewSpecialWarning("specWarnMySD")
 
 local timerCobaltMineCD				= mod:NewNextTimer(10.5, 129424)--12-15second variations
 local timerPetrification			= mod:NewNextTimer(76, 125091)
@@ -45,13 +52,14 @@ local timerAmethystPoolCD			= mod:NewCDTimer(6, 130774)
 local berserkTimer					= mod:NewBerserkTimer(420)
 
 mod:AddBoolOption("ArrowOnJasperChains")
-mod:AddBoolOption("InfoFrame")
+mod:AddBoolOption("InfoFrame", true, "sound")
+mod:AddBoolOption("AInfoFrame", false, "sound")
 
 local expectedBosses = 3
-local Jade = "|cff00D25F"..EJ_GetSectionInfo(5773).."|r"
-local Jasper = "|cffED1C24"..EJ_GetSectionInfo(5774).."|r"
-local Cobalt = "|cff00A2E8"..EJ_GetSectionInfo(5771).."|r"
-local Amethyst = "|cff783678"..EJ_GetSectionInfo(5691).."|r"
+local Jade = EJ_GetSectionInfo(5773)
+local Jasper = EJ_GetSectionInfo(5774)
+local Cobalt = EJ_GetSectionInfo(5771)
+local Amethyst = EJ_GetSectionInfo(5691)
 local Overload = {
 	["Cobalt"] = GetSpellInfo(115840),
 	["Jade"] = GetSpellInfo(115842),
@@ -124,6 +132,7 @@ function mod:ClobaltMineTarget(targetname)
 	warnCobaltMine:Show(targetname)
 	if targetname == UnitName("player") then
 		specWarnCobaltMine:Show()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runaway.mp3")--快躲開
 		yellCobaltMine:Yell()
 	else
 		local uId = DBM:GetRaidUnitId(targetname)
@@ -136,6 +145,7 @@ function mod:ClobaltMineTarget(targetname)
 			local inRange = DBM.RangeCheck:GetDistance("player", x, y)
 			if inRange and inRange < 8 then
 				specWarnCobaltMineNear:Show(targetname)
+				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runaway.mp3")--快躲開
 			end
 		end
 	end
@@ -160,6 +170,55 @@ function mod:ScanHandler(ScansCompleted)
 		if scansDone < 12 then--Make sure not to infinite loop here as well.
 			self:ScheduleMethod(0.05, "ScanHandler")
 		end
+	end
+end
+
+local RPN, GPN, BPN, PPN = 0, 0, 0, 0
+local Nextoverloadboss
+local SDSTAT, NOSTAT
+
+local SDNOW = {
+	["Rsdnow"] = {true} ,
+	["Gsdnow"] = {true} ,
+	["Bsdnow"] = {true} ,
+	["Psdnow"] = {true}
+}
+
+
+local function 	ChecknextOverload()
+	for i = 1, 4 do
+		if UnitName("boss"..i) == Jasper then
+			RPN = UnitPower("boss"..i)
+		elseif UnitName("boss"..i) == Jade then
+			GPN = UnitPower("boss"..i)
+		elseif UnitName("boss"..i) == Cobalt then
+			BPN = UnitPower("boss"..i)
+		elseif UnitName("boss"..i) == Amethyst then
+			PPN = UnitPower("boss"..i)
+		end
+	end
+	if SDNOW["Rsdnow"] then RPN = 0 end
+	if SDNOW["Gsdnow"] then GPN = 0 end
+	if SDNOW["Bsdnow"] then BPN = 0 end
+	if SDNOW["Psdnow"] then PPN = 0 end
+	if RPN == 0 and GPN == 0 and BPN == 0 and PPN == 0 then return end
+	Nextoverloadboss = math.max(RPN, GPN, BPN, PPN)
+	if Nextoverloadboss == RPN then
+		NOSTAT = L.NEXTR
+	elseif Nextoverloadboss == GPN then
+		NOSTAT = L.NEXTG
+	elseif Nextoverloadboss == BPN then
+		NOSTAT = L.NEXTB
+	elseif Nextoverloadboss == PPN then
+		NOSTAT = L.NEXTP
+	end
+	if mod.Options.InfoFrame then
+		DBM.InfoFrame:SetHeader(NOSTAT.."  "..SDSTAT)
+		DBM.InfoFrame:Show(4, "cobalypower", SDNOW)
+	end
+	if mod.Options.AInfoFrame then
+		DBM.InfoFrame:SetHeader(SDSTAT)
+		DBM.InfoFrame:Show(4, "cobalypower", SDNOW, true)
 	end
 end
 
@@ -191,14 +250,27 @@ function mod:OnCombatStart(delay)
 			end
 		end
 	end
-	if self.Options.InfoFrame then
-		DBM.InfoFrame:SetHeader("--")
-		DBM.InfoFrame:Show(4, "enemypower", 1)
+	SDSTAT = L.SDNOT
+	RPN, GPN, BPN, PPN = 0, 0, 0, 0
+	SDNOW = {
+	["Rsdnow"] = {true} ,
+	["Gsdnow"] = {true} ,
+	["Bsdnow"] = {true} ,
+	["Psdnow"] = {true}
+	}
+	if self.Options.InfoFrame and not self.Options.AInfoFrame then
+		DBM.InfoFrame:SetHeader(SDSTAT)
+		DBM.InfoFrame:Show(4, "cobalypower", SDNOW)
+	end
+	if self.Options.AInfoFrame then
+		DBM.InfoFrame:SetHeader(SDSTAT)
+		DBM.InfoFrame:Show(4, "cobalypower", SDNOW, true)
 	end
 end
 
 function mod:OnCombatEnd()
-	if self.Options.InfoFrame then
+	if self.Options.InfoFrame or self.Options.AInfoFrame then
+		SDSTAT = nil
 		DBM.InfoFrame:Hide()
 	end
 	if self.Options.ArrowOnJasperChains then
@@ -223,16 +295,33 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		if args:IsPlayer() then
 			playerHasChains = true
-			specWarnJasperChains:Show()
 			yellJasperChains:Yell()
 			local uId = getBossuId(Jasper)
-			if uId and UnitPower(uId) <= 50 and activePetrification == "Jasper" then--Make sure his energy isn't already high, otherwise breaking chains when jasper will only be active for a few seconds is bad
+			if uId and UnitPower(uId) <= 80 and activePetrification == "Jasper" then--Make sure his energy isn't already high, otherwise breaking chains when jasper will only be active for a few seconds is bad
 				specWarnBreakJasperChains:Show()
+				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_ldsl.mp3") --拉斷鎖鏈
 				DBM.Arrow:Hide()
+			else
+				specWarnJasperChains:Show()
+				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_lx.mp3")--連線快靠近
 			end
 		end
 	elseif args:IsSpellID(130774) and args:IsPlayer() then
 		specWarnAmethystPool:Show()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runaway.mp3")--快躲開
+	elseif args:IsSpellID(115745) then
+		if args.destName == Jasper then SDNOW["Rsdnow"] = true end
+		if args.destName == Jade then SDNOW["Gsdnow"] = true end
+		if args.destName == Cobalt then SDNOW["Bsdnow"] = true end
+		if args.destName == Amethyst then SDNOW["Psdnow"] = true end
+		if SDSTAT ~=nil then
+			ChecknextOverload()
+		end
+		if args.sourceGUID == UnitGUID("target") then
+			if mod:IsTank() then
+				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_mbsh.mp3")--目標石化
+			end
+		end
 	end
 end
 
@@ -242,41 +331,51 @@ function mod:SPELL_AURA_REMOVED(args)
 		if self.Options.ArrowOnJasperChains then
 			DBM.Arrow:Hide()
 		end
+	elseif args:IsSpellID(115745) then
+		if args.destName == Jasper then SDNOW["Rsdnow"] = false end
+		if args.destName == Jade then SDNOW["Gsdnow"] = false end
+		if args.destName == Cobalt then SDNOW["Bsdnow"] = false end
+		if args.destName == Amethyst then SDNOW["Psdnow"] = false end	
+		ChecknextOverload()
 	end
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(115840) then -- Cobalt
-		if self.Options.InfoFrame then
-			DBM.InfoFrame:SetHeader("--")
-		end
 		warnCobaltOverload:Show()
 		if activePetrification == "Cobalt" then
 			timerPetrification:Cancel()
+			SDSTAT = L.SDNOT
+			ChecknextOverload()
+		else
+			ChecknextOverload()
 		end
 	elseif args:IsSpellID(115842) then -- Jade
-		if self.Options.InfoFrame then
-			DBM.InfoFrame:SetHeader("--")
-		end
 		warnJadeOverload:Show()
 		if activePetrification == "Jade" then
 			timerPetrification:Cancel()
+			SDSTAT = L.SDNOT
+			ChecknextOverload()
+		else
+			ChecknextOverload()
 		end
 	elseif args:IsSpellID(115843) then -- Jasper
-		if self.Options.InfoFrame then
-			DBM.InfoFrame:SetHeader("--")
-		end
 		warnJasperOverload:Show()
 		if activePetrification == "Jasper" then
 			timerPetrification:Cancel()
+			SDSTAT = L.SDNOT
+			ChecknextOverload()
+		else
+			ChecknextOverload()
 		end
 	elseif args:IsSpellID(115844) then -- Amethyst
-		if self.Options.InfoFrame then
-			DBM.InfoFrame:SetHeader("--")
-		end
 		warnAmethystOverload:Show()
 		if activePetrification == "Amethyst" then
 			timerPetrification:Cancel()
+			SDSTAT = L.SDNOT
+			ChecknextOverload()
+		else
+			ChecknextOverload()
 		end
 	elseif args:IsSpellID(116223) then
 		warnJadeShards:Show()
@@ -298,8 +397,18 @@ end
 
 function mod:OnSync(msg, boss)
 	-- if boss aprats from 10 yard and get Solid Stone, power no longer increase. If this, overlord not casts. So timer can be confusing. Disabled for find better way. 
-	if msg == "Overload" then
+	if msg == "Overload" and self:AntiSpam(2, 6) then
 		specWarnOverloadSoon:Show(Overload[boss])
+		if boss == "Cobalt" then
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_lscz.mp3") --藍色超載		
+		elseif boss == "Jade" then
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_lvscz.mp3") --綠色超載
+		elseif boss == "Jasper" then
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_hscz.mp3") --紅色超載
+		elseif boss == "Amethyst" then
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_zscz.mp3") --紫色超載
+		end
+		ChecknextOverload()
 	end
 end
 
@@ -317,33 +426,58 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 115852 and self:AntiSpam(2, 1) then
 		activePetrification = "Cobalt"
 		timerPetrification:Start()
-		if self.Options.InfoFrame then
-			DBM.InfoFrame:SetHeader(Cobalt)
+		warnBSD:Show()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_lssh.mp3") --藍色石化
+		SDSTAT = L.SDBLUE		
+		ChecknextOverload()
+		if UnitName(getBossuId(Cobalt).."target") == UnitName("player") then
+			if mod:IsTank() then
+				specWarnMySD:Show()
+			end
 		end
 	elseif spellId == 116006 and self:AntiSpam(2, 2) then
 		activePetrification = "Jade"
 		timerPetrification:Start()
-		if self.Options.InfoFrame then
-			DBM.InfoFrame:SetHeader(Jade)
+		warnGSD:Show()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_lvssh.mp3") --綠色石化
+		SDSTAT = L.SDGREEN
+		ChecknextOverload()
+		if UnitName(getBossuId(Jade).."target") == UnitName("player") then
+			if mod:IsTank() then
+				specWarnMySD:Show()
+			end
 		end
 	elseif spellId == 116036 and self:AntiSpam(2, 3) then
 		activePetrification = "Jasper"
 		timerPetrification:Start()
-		if self.Options.InfoFrame then
-			DBM.InfoFrame:SetHeader(Jasper)
+		warnRSD:Show()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_hssh.mp3") --紅色石化
+		SDSTAT = L.SDRED
+		ChecknextOverload()
+		if UnitName(getBossuId(Jasper).."target") == UnitName("player") then
+			if mod:IsTank() then
+				specWarnMySD:Show()
+			end
 		end
 		if playerHasChains then
 			local uId = getBossuId(Jasper)
-			if uId and UnitPower(uId) <= 50 then--Make sure his energy isn't already high, otherwise breaking chains when jasper will only be active for a few seconds is bad
+			if uId and UnitPower(uId) <= 80 then--Make sure his energy isn't already high, otherwise breaking chains when jasper will only be active for a few seconds is bad
 				specWarnBreakJasperChains:Show()
+				sndWOP:Schedule(1, "Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_ldsl.mp3") --拉斷鎖鏈
 				DBM.Arrow:Hide()
 			end
 		end
 	elseif spellId == 116057 and self:AntiSpam(2, 4) then
 		activePetrification = "Amethyst"
 		timerPetrification:Start()
-		if self.Options.InfoFrame then
-			DBM.InfoFrame:SetHeader(Amethyst)
+		warnPSD:Show()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_zssh.mp3") --紫色石化
+		SDSTAT = L.SDPURPLE
+		ChecknextOverload()
+		if UnitName(getBossuId(Amethyst).."target") == UnitName("player") then
+			if mod:IsTank() then
+				specWarnMySD:Show()
+			end
 		end
 	elseif spellId == 129424 and self:AntiSpam(2, 5) then
 		scansDone = 0

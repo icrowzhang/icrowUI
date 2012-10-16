@@ -1,4 +1,4 @@
--- *********************************************************
+﻿-- *********************************************************
 -- **               Deadly Boss Mods - GUI                **
 -- **            http://www.deadlybossmods.com            **
 -- *********************************************************
@@ -603,6 +603,20 @@ function PanelPrototype:AutoSetDimension()
 	end
 
 	self.frame.myheight = need_height + 25
+	self.frame:SetHeight(need_height)
+end
+
+function PanelPrototype:AutoSetDimensionDD()
+	if not self.frame.mytype == "area" then return end
+	local height = self.frame:GetHeight()
+
+	local need_height = 25
+	
+	local kids = { self.frame:GetChildren() }
+	for _, child in pairs(kids) do
+		need_height = need_height + child:GetHeight() + 10
+	end
+	self.frame.myheight = need_height
 	self.frame:SetHeight(need_height)
 end
 
@@ -1436,8 +1450,8 @@ local function CreateOptionsMenu()
 		RaidWarnSoundDropDown:SetPoint("TOPLEFT", WarningIconRight, "BOTTOMLEFT", 20, -10)
 
 		local countSounds = {
-			{	text	= "Mosh (Male)",	value 	= "Mosh"},
-			{	text	= "Corsica (Female)",value 	= "Corsica"},
+			{	text	= "中文倒計時",	value 	= "Mosh"},
+			{	text	= "英文倒計時", value 	= "Corsica"},
 		}
 		local CountSoundDropDown = raidwarnoptions:CreateDropdown(L.CountdownVoice, countSounds, 
 		DBM.Options.CountdownVoice, function(value) 
@@ -2268,6 +2282,7 @@ do
 			for _,v in ipairs(category) do
 				if v == DBM_OPTION_SPACER then
 					addSpacer = true
+					catpanel:AutoSetDimension()
 				elseif type(mod.Options[v]) == "boolean" then
 					lastButton = button
 					button = catpanel:CreateCheckButton(mod.localization.options[v], true)
@@ -2282,6 +2297,7 @@ do
 						mod.Options[v] = not mod.Options[v]
 						if mod.optionFuncs and mod.optionFuncs[v] then mod.optionFuncs[v]() end
 					end)
+					catpanel:AutoSetDimension()
 				elseif mod.dropdowns and mod.dropdowns[v] then
 					lastButton = button
 					local dropdownOptions = {}
@@ -2293,8 +2309,9 @@ do
 						button:SetPoint("TOPLEFT", lastButton, "BOTTOMLEFT", 0, -6)
 						addSpacer = false
 					else
-						button:SetPoint("TOPLEFT", lastButton, "BOTTOMLEFT", 0, -10)
+						button:SetPoint("TOPLEFT", lastButton, "BOTTOMLEFT", 0, -20)
 					end
+					catpanel:AutoSetDimensionDD()
 --					button:SetScript("OnShow", function(self)
 --						-- set the correct selected value if the mod is being loaded after the gui is loaded (hack because the dropdown menu lacks a SetSelectedValue method)
 --						_G[button:GetName().."Text"]:SetText(mod.localization.options[v])
@@ -2303,7 +2320,7 @@ do
 --					end)
 				end
 			end
-			catpanel:AutoSetDimension()
+--			catpanel:AutoSetDimension()
 			panel:SetMyOwnHeight()
 		end
 	end
