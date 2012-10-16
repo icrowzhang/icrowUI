@@ -1,6 +1,7 @@
-﻿----####0.97a####
+﻿----####0.97c####
 local _
-
+--~ 	显示全成长值,false改成true
+local ShowAllGrow = false
 if GetLocale()=="zhCN" then
 	PET_BATTLE_COMBAT_LOG_AURA_APPLIED ="%1$s对%3$s %4$s 造成了%2$s效果."
 	PET_BATTLE_COMBAT_LOG_PAD_AURA_APPLIED = "%1$s对%3$s 造成了%2$s效果."
@@ -147,34 +148,11 @@ local function PetBattleAbilityButton_OnEnterHook(self)
 	end
 end
 
---~ 显示宠物成长值
---~ local PetJournalFilterDropDown_InitializeHook = function(self, level)
---~ 	PetJournalFilterDropDown_Initialize(self, level)
---~ 	info = UIDropDownMenu_CreateInfo()
-
---~ 	if level == 1 then
---~ 		info.keepShownOnClick = true
---~ 		info.checked = HPetSaves.ShowGrowInfo
---~ 		info.isNotRadio = true
-
---~ 		info.text = GetLocale()=="zhCN" and "成长值" or "成長值"
---~ 		info.func = function(_, _, _, value)
-
---~ 					HPetSaves.ShowGrowInfo = not HPetSaves.ShowGrowInfo
---~ 					PetJournal_UpdatePetCard(PetJournalPetCard);
---~ 				end
---~ 		info.checked = function() return HPetSaves.ShowGrowInfo	 end
---~ 		UIDropDownMenu_AddButton(info,level)
---~ 	end
---~ end
-
-local function ShowMaxValue(level,self)
+local function ShowMaxValue(level,health,power,speed,self)
 	local level=tonumber(level)
-	local power=tonumber(self.PowerFrame.power:GetText())
-	local speed=tonumber(self.SpeedFrame.speed:GetText())
-	local health=tonumber(self.HealthFrame.health:GetText())-100
-	
-	if health == nil or speed == nil or power == nil then return end
+	local power=tonumber(power)
+	local speed=tonumber(speed)
+	local health=tonumber(health)-100
 
 	if health/5 > power and health/5 > speed then
 --~ 	生命
@@ -187,18 +165,24 @@ local function ShowMaxValue(level,self)
 		self.SpeedFrame.speed:SetText(format("%d(+%.2f)",speed,speed/level))
 	else
 --~ 	平衡
---~ 		self.HealthFrame.health:SetText(format("%d(+%.2f)",health + 100,health/level))
 		self.PowerFrame.power:SetText(format("%d(+%.2f)",power,power/level))
 		self.SpeedFrame.speed:SetText(format("%d(+%.2f)",speed,speed/level))
 	end
+
+	if ShowAllGrow then
+		self.HealthFrame.health:SetText(format("%d(+%.2f)",health + 100,health/level))
+		self.PowerFrame.power:SetText(format("%d(+%.2f)",power,power/level))
+		self.SpeedFrame.speed:SetText(format("%d(+%.2f)",speed,speed/level))
+	end
+
 end
 
 --~ 对没有标示品质的宠物进行标示品质
 local PetJournal_UpdatePetCardHook=function(self)
 	if PetJournalPetCard.petID then
 		local speciesID, customName, level, xp, maxXp, displayID, name, icon, petType, creatureID, sourceText, description, isWild, canBattle, tradable = C_PetJournal.GetPetInfoByPetID(PetJournalPetCard.petID)
+		local _,health,power,speed,rarity = C_PetJournal.GetPetStats(PetJournalPetCard.petID)
 		if canBattle and self.QualityFrame:IsShown()==nil then
-			local _,_,_,_,rarity = C_PetJournal.GetPetStats(PetJournalPetCard.petID)
 			if rarity then
 				self.QualityFrame.quality:SetText(_G["BATTLE_PET_BREED_QUALITY"..rarity]);
 				local color = ITEM_QUALITY_COLORS[rarity-1];
@@ -206,8 +190,8 @@ local PetJournal_UpdatePetCardHook=function(self)
 				self.QualityFrame:Show();
 			end
 		end
-		if HPetSaves.ShowGrowInfo then
-			ShowMaxValue(level,self)
+		if HPetSaves.ShowGrowInfo and speciesID then
+			ShowMaxValue(level,health,power,speed,self)
 		end
 	end
 end
