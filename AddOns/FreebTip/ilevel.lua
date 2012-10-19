@@ -41,8 +41,9 @@ local Quality = {
 
 local function GetItemScore(iLink)
    local _, _, itemRarity, itemLevel, _, _, _, _, itemEquip = GetItemInfo(iLink);
+   itemLevel = itemLevel or 0
    if (IsEquippableItem(iLink)) then
-      if not   (itemLevel > 1) and (itemRarity > 1) then
+      if not (itemLevel > 1) and (itemRarity > 1) then
       return 0;
       end
    end
