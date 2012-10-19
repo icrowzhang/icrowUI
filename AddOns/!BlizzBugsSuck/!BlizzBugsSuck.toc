@@ -12,6 +12,5 @@
 ## X-Curse-Project-Name: BlizzBugsSuck
 ## X-Curse-Project-ID: blizzbugssuck
 ## X-Curse-Repository-ID: wow/blizzbugssuck/mainline
-## SavedVariables: StrataFixDB
 
 BlizzBugsSuck.lua
