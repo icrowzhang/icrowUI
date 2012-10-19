@@ -7119,10 +7119,8 @@ Delay:SetScript("OnEvent", function()
 
 		WorldMapFrame:HookScript("OnEvent", function(self, event)
 			if event == "PLAYER_ENTERING_WORLD" then
-				ToggleFrame(WorldMapFrame)
 				SetCVar("miniWorldMap", 1)
 				WorldMap_ToggleSizeDown()
-				ToggleFrame(WorldMapFrame)
 			end
 		end)
 
