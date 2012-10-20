@@ -5,7 +5,7 @@ local cfg = {
 	killfilter = true,				-- 干掉讨厌的@#$%^&*聊天绿坝娘
 	blizzsctfont = true,			-- 替换系统内置的玩家受到伤害和治疗的数字字体
 	killblizzframes = false,		-- 干掉某些不想要的系统框体(目前没有)
-	killbossemotes = false,			-- 干掉系统内置的山寨DBM(版本初期不推荐, 建议等DBM完善了再...)
+	killbossemotes = true,			-- 干掉系统内置的山寨DBM
 	safequeue = true,				-- 排进战场的时候再也不怕错点到退出队列按钮了!
 }
 
