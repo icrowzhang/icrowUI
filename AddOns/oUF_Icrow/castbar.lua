@@ -125,10 +125,12 @@ CastBar_PostCastStart = function(self, unit, name, rank, text)
 	local parent = self:GetParent()
 	if parent.unit == "player" then
 		local sf = self.SafeZone
-		sf.timeDiff = GetTime() - sf.sendTime
-		sf.timeDiff = sf.timeDiff > self.max and self.max or sf.timeDiff
-		sf:SetWidth(self:GetWidth() * sf.timeDiff / self.max)
-		sf:Show()
+		if sf.sendTime then
+			sf.timeDiff = GetTime() - sf.sendTime
+			sf.timeDiff = sf.timeDiff > self.max and self.max or sf.timeDiff
+			sf:SetWidth(self:GetWidth() * sf.timeDiff / self.max)
+			sf:Show()
+		end
 		if self.casting then
 			setBarTicks(self, 0)
 		else
