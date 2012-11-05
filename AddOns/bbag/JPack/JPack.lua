@@ -166,7 +166,11 @@ local function CanGoInBag(frombag,fromslot, tobag)
    -- Get the bag's family
    local bagFamily = select(2, GetContainerNumFreeSlots(tobag))
 
-   return bagFamily == 0 or bit.band(itemFamily, bagFamily) > 0
+   if itemFamily then
+		return bagFamily == 0 or bit.band(itemFamily, bagFamily) > 0
+   else
+		return false
+   end
 end
 
 --背包是否准备好了（无锁定物品）
