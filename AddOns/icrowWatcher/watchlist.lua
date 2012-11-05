@@ -109,7 +109,7 @@ ns.Watchlist = {
 			Mode = "ICON", IconSize = 30,
 			Pos = {"CENTER", UIParent, "CENTER", 79, -52},
 			List = {
-				1978, -- 毒蛇钉刺
+				118253, -- 毒蛇钉刺
 				3674, -- 黑箭
 				53301, -- 爆炸射击
 			},
