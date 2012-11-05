@@ -470,7 +470,11 @@ F.SetBD = function(f, x, y, x2, y2)
 		bg:SetPoint("TOPLEFT", x, y)
 		bg:SetPoint("BOTTOMRIGHT", x2, y2)
 	end
-	bg:SetFrameLevel(0)
+	if f:GetFrameLevel() > 0 then
+		bg:SetFrameLevel(f:GetFrameLevel() - 1)
+	else
+		bg:SetFrameLevel(0)
+	end
 	F.CreateBD(bg)
 	F.CreateSD(bg)
 end
@@ -883,6 +887,35 @@ Skin:SetScript("OnEvent", function(self, event, addon)
 				end
 			end
 		end)
+		
+		-- [[ Pet battle tooltips ]]
+		
+		local tooltips = {PetJournalPrimaryAbilityTooltip, PetJournalSecondaryAbilityTooltip, PetBattlePrimaryUnitTooltip, PetBattlePrimaryAbilityTooltip, FloatingBattlePetTooltip, FloatingPetBattleAbilityTooltip, BattlePetTooltip}
+		for _, f in pairs(tooltips) do
+			if f then
+				f:DisableDrawLayer("BACKGROUND")
+				f:DisableDrawLayer("BORDER")
+				local bg = CreateFrame("Frame", nil, f)
+				bg:SetAllPoints()
+				bg:SetFrameLevel(0)
+				F.CreateBD(bg)
+			end
+			if f.Delimiter then
+				f.Delimiter:SetHeight(1)
+				f.Delimiter:SetVertexColor(0, 0, 0, 1)
+			end
+			if f.Delimiter1 then
+				f.Delimiter1:SetHeight(1)
+				f.Delimiter1:SetVertexColor(0, 0, 0, 1)
+			end
+			if f.Delimiter2 then
+				f.Delimiter2:SetHeight(1)
+				f.Delimiter2:SetVertexColor(0, 0, 0, 1)
+			end
+			if f.CloseButton then
+				F.ReskinClose(f.CloseButton)
+			end
+		end
 
 		-- [[ Fonts ]]
 
@@ -3074,6 +3107,69 @@ Skin:SetScript("OnEvent", function(self, event, addon)
 
 		F.CreateBD(MissingLootFrame)
 		F.ReskinClose(MissingLootFramePassButton)
+		
+		-- Bonus roll frame
+		
+		BonusRollFrame.Background:SetTexture("")
+		BonusRollFrame.LootSpinnerBG:SetTexture("")
+		BonusRollFrame.IconBorder:SetTexture("")
+		BonusRollFrame.WhiteFade:SetTexture("")
+		
+		local bd = CreateFrame("Frame", nil, BonusRollFrame)
+		bd:SetFrameStrata("HIGH")
+		bd:SetAllPoints()
+		F.CreateBD(bd)
+		
+		local iconBorder = CreateFrame("Frame", nil, BonusRollFrame)
+		iconBorder:SetPoint("TOPLEFT", BonusRollFrame.IconBorder)
+		iconBorder:SetPoint("BOTTOMRIGHT", BonusRollFrame.IconBorder)
+		F.CreateBD(iconBorder, 0)
+		
+		BonusRollFrame.PromptFrame.Timer.Bar:SetTexture("Interface\\TARGETINGFRAME\\UI-TargetingFrame-BarFill")
+		local timerBorder = CreateFrame("Frame", nil, BonusRollFrame.PromptFrame)
+		timerBorder:SetFrameStrata("HIGH")
+		timerBorder:SetSize(192, 11)
+		timerBorder:SetPoint("TOPLEFT", BonusRollFrame.PromptFrame.Timer, -1, 1)
+		F.CreateBD(timerBorder, .25)
+		
+		BonusRollFrame.BlackBackgroundHoist:SetAlpha(0)
+		
+		-- Bonus roll won frame
+		
+		local bonuslist = {BonusRollLootWonFrame, BonusRollMoneyWonFrame}
+		for _, frame in pairs(bonuslist) do
+			frame:SetAlpha(1)
+			frame.SetAlpha = F.dummy
+			
+			local icon = frame.Icon
+			icon:SetTexCoord(.08, .92, .08, .92)
+			
+			if not frame.bg then
+				frame.bg = CreateFrame("Frame", nil, frame)
+				frame.bg:SetAllPoints()
+				frame.bg:SetFrameLevel(frame:GetFrameLevel()-1)
+				
+				frame:HookScript("OnEnter", fixBg)
+				frame:HookScript("OnShow", fixBg)
+				frame.animIn:HookScript("OnFinished", fixBg)
+				
+				F.CreateBD(frame.bg)
+				F.CreateBG(icon)
+				
+				frame.Background:Hide()
+				frame.IconBorder:Hide()
+			end
+			
+			if frame.glow then
+				frame.glow:Hide()
+				frame.glow.Show = F.dummy
+			end
+			
+			if frame.shine then
+				frame.shine:Hide()
+				frame.shine.Show = F.dummy
+			end
+		end
 
 		-- BN conversation
 
@@ -5985,6 +6081,10 @@ Skin:SetScript("OnEvent", function(self, event, addon)
 			bg:SetAllPoints()
 			bg:SetFrameLevel(0)
 			F.CreateBD(bg)
+			f.Delimiter1:SetHeight(1)
+			f.Delimiter1:SetVertexColor(0, 0, 0, 1)
+			f.Delimiter2:SetHeight(1)
+			f.Delimiter2:SetVertexColor(0, 0, 0, 1)
 		end
 
 		PetJournalLoadoutBorderSlotHeaderText:SetParent(PetJournal)
@@ -6044,6 +6144,9 @@ Skin:SetScript("OnEvent", function(self, event, addon)
 			bu.icon.bg:SetPoint("BOTTOMRIGHT", bu.icon, 1, -1)
 			bu.icon.bg:SetFrameLevel(bu:GetFrameLevel()-1)
 			F.CreateBD(bu.icon.bg, .25)
+			
+			bu.petTypeIcon:ClearAllPoints()
+			bu.petTypeIcon:SetPoint("BOTTOMLEFT", 1, 1)
 
 			bu.setButton:GetRegions():SetPoint("TOPLEFT", bu.icon, -5, 5)
 			bu.setButton:GetRegions():SetPoint("BOTTOMRIGHT", bu.icon, 5, -5)
@@ -6101,6 +6204,136 @@ Skin:SetScript("OnEvent", function(self, event, addon)
 			bu.icon:SetTexCoord(.08, .92, .08, .92)
 			F.CreateBG(bu.icon)
 		end
+		
+		-- Skinning for PetBattleUI
+		PetBattleFrame.TopArtLeft:SetAlpha(0)
+		PetBattleFrame.TopArtRight:SetAlpha(0)
+		PetBattleFrame.TopVersus:SetAlpha(0)
+		PetBattleFrame.WeatherFrame:DisableDrawLayer("BACKGROUND")
+		
+		local framelist = {PetBattleFrame.ActiveAlly, PetBattleFrame.ActiveEnemy}
+		local minilist = {PetBattleFrame.Ally2, PetBattleFrame.Ally3, PetBattleFrame.Enemy2, PetBattleFrame.Enemy3}
+		
+		for i, f in pairs(framelist) do
+			f.Icon:SetTexCoord(.08, .92, .08, .92)
+			f.Border:SetAlpha(0)
+			f.HealthBarBG:SetAlpha(0)
+			f.Border2:SetAlpha(0)
+			f.BorderFlash:SetTexture("")
+			f.LevelUnderlay:SetAlpha(0)
+			f.SpeedUnderlay:SetAlpha(0)
+			f.ActualHealthBar:SetTexture("Interface\\TARGETINGFRAME\\UI-TargetingFrame-BarFill")
+			f.ActualHealthBar:SetTexCoord(0, 1, 0, 1)
+			f.ActualHealthBar:SetVertexColor(0, .9, 0, 1)
+			f.HealthBarFrame:SetAlpha(0)
+			
+			local IconBorder = CreateFrame("Frame", nil, f)
+			IconBorder:SetFrameStrata("BACKGROUND")
+			IconBorder:SetPoint("TOPLEFT", f.Icon, -1, 1)
+			IconBorder:SetPoint("BOTTOMRIGHT", f.Icon, 1, -1)
+			F.SetBD(IconBorder)
+			
+			local HealthBorder = CreateFrame("Frame", nil, f)
+			HealthBorder:SetFrameStrata("BACKGROUND")
+			HealthBorder:SetSize(147, 39)
+			F.SetBD(HealthBorder)
+			if i == 1 then
+				HealthBorder:SetPoint("TOPLEFT", f.ActualHealthBar, -1, 1)
+			else
+				HealthBorder:SetPoint("BOTTOMRIGHT", f.ActualHealthBar, 1, -1)
+			end
+		end
+		
+		for i, f in pairs(minilist) do
+			f:SetSize(37, 37)
+			f.healthBarWidth = 35
+			f.Icon:SetTexCoord(.08, .92, .08, .92)
+			f.HealthBarBG:SetAlpha(0)
+			f.ActualHealthBar:SetTexture("Interface\\TARGETINGFRAME\\UI-TargetingFrame-BarFill")
+			f.ActualHealthBar:ClearAllPoints()
+			if i == 1 or i == 2 then
+				f.ActualHealthBar:SetPoint("BOTTOMLEFT", 1, 1)
+			else
+				f.ActualHealthBar:SetPoint("BOTTOMRIGHT", -1, 1)
+			end
+			f.BorderAlive:SetAlpha(0)
+			f.HealthDivider:SetAlpha(0)
+			
+			f.IconBorder = CreateFrame("Frame", nil, f)
+			f.IconBorder:SetFrameStrata("BACKGROUND")
+			f.IconBorder:SetPoint("TOPLEFT", f.Icon)
+			f.IconBorder:SetPoint("BOTTOMRIGHT", f.Icon)
+			F.SetBD(f.IconBorder)
+		end
+		
+		PetBattleFrameXPBarLeft:SetTexture("")
+		PetBattleFrameXPBarRight:SetTexture("")
+		PetBattleFrameXPBarMiddle:SetTexture("")
+		PetBattleFrameXPBar:DisableDrawLayer("BACKGROUND")
+		PetBattleFrameXPBar:SetSize(250, 11)
+		PetBattleFrameXPBar:ClearAllPoints()
+		PetBattleFrameXPBar:SetPoint("BOTTOM", UIParent, 14, 120)
+		
+		local bottom = PetBattleFrame.BottomFrame
+		bottom:ClearAllPoints()
+		bottom:SetPoint("BOTTOM", UIParent, 100, 0)
+		bottom.RightEndCap:SetAlpha(0)
+		bottom.LeftEndCap:SetAlpha(0)
+		bottom.Background:SetAlpha(0)
+		bottom.Delimiter:SetAlpha(0)
+		bottom.MicroButtonFrame:Hide()
+		
+		F.Reskin(bottom.TurnTimer.SkipButton)
+		bottom.TurnTimer.TimerBG:SetAlpha(0)
+		bottom.TurnTimer.ArtFrame:SetAlpha(0)
+		bottom.TurnTimer.ArtFrame2:SetAlpha(0)
+		bottom.TurnTimer.Bar:ClearAllPoints()
+		bottom.TurnTimer.Bar:SetPoint("LEFT", bottom.TurnTimer, 115, -3)
+		
+		bottom.FlowFrame:DisableDrawLayer("BACKGROUND")
+		bottom.FlowFrame.LeftEndCap:SetAlpha(0)
+		bottom.FlowFrame.RightEndCap:SetAlpha(0)
+		
+		local list = {bottom.PetSelectionFrame.Pet1, bottom.PetSelectionFrame.Pet2, bottom.PetSelectionFrame.Pet3}
+		for _, f in pairs(list) do
+			f.Framing:SetAlpha(0)
+			f.Icon:SetTexCoord(.08, .92, .08, .92)
+			f.HealthBarBG:SetAlpha(0)
+			f.ActualHealthBar:SetTexture("Interface\\TARGETINGFRAME\\UI-TargetingFrame-BarFill")
+			f.HealthDivider:SetAlpha(0)
+			f.DeadOverlay:SetAlpha(0)
+		end
+		
+		local xpBorder = CreateFrame("Frame", nil, PetBattleFrameXPBar)
+		xpBorder:SetPoint("TOPLEFT", -1, 1)
+		xpBorder:SetPoint("BOTTOMRIGHT", 1, -1)
+		F.SetBD(xpBorder)
+		
+		local timerBorder = CreateFrame("Frame", nil, bottom.TurnTimer)
+		timerBorder:SetPoint("TOPLEFT", bottom.TurnTimer.Bar, -1, 1)
+		timerBorder:SetSize(163, 13)
+		F.SetBD(timerBorder)
+		bottom.TurnTimer.timerBorder = timerBorder
+		hooksecurefunc("PetBattleFrame_UpdatePassButtonAndTimer", function(self)
+			local pveBattle = C_PetBattles.IsPlayerNPC(LE_BATTLE_PET_ENEMY)
+			self.BottomFrame.TurnTimer.timerBorder:SetShown(not pveBattle)
+		end)
+		hooksecurefunc("PetBattleFrameTurnTimer_OnUpdate", function(self, elapsed)
+			if ( self.turnExpires ) then
+				local timeRemaining = self.turnExpires - GetTime()
+				if ( timeRemaining <= 0.01 ) then
+					timeRemaining = 0.01;
+				end
+
+				local timeRatio = 1.0;
+				if ( self.turnTime > 0.0 ) then
+					timeRatio = timeRemaining / self.turnTime;
+				end
+				local usableSpace = 161;
+
+				self.Bar:SetWidth(timeRatio * usableSpace);
+			end
+		end)
 	elseif addon == "Blizzard_ReforgingUI" then
 		for i = 15, 25 do
 			select(i, ReforgingFrame:GetRegions()):Hide()
