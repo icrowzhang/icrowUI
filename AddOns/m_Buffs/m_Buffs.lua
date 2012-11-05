@@ -26,6 +26,7 @@ for i = 1, 3 do
 	local teicon 		= _G["TempEnchant"..i.."Icon"]
 	local teduration 	= _G["TempEnchant"..i.."Duration"]
 	local teborder		= _G["TempEnchant"..i.."Border"]
+	te:SetParent(BuffFrame)
 	te:SetSize(cfg.iconsize,cfg.iconsize)
 	teicon:SetTexCoord(.08, .92, .08, .92)
 	teicon:SetAllPoints(te)
