@@ -7,6 +7,7 @@ local cfg = {
 	killblizzframes = false,		-- 干掉某些不想要的系统框体(目前没有)
 	killbossemotes = true,			-- 干掉系统内置的山寨DBM
 	safequeue = true,				-- 排进战场的时候再也不怕错点到退出队列按钮了!
+	petbattleshowmap = true, 		-- 在宠物对战中依然显示小地图和任务追踪
 }
 
 ---------->> saysapped by Ray @ ngacn.cc
@@ -94,5 +95,9 @@ icrowGallery:SetScript("OnEvent", function(self, event, ...)
 	end
 	if cfg.safequeue then
 		SafeQueue_Enable()
+	end
+	if cfg.petbattleshowmap then
+		FRAMELOCK_STATES["PETBATTLES"]["MinimapCluster"]=""
+		FRAMELOCK_STATES["PETBATTLES"]["WatchFrame"]=""
 	end
 end)
