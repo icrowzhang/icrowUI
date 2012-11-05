@@ -1,16 +1,25 @@
 ﻿## Interface: 50001
-## Title: PetBattleAny
+## Title: HPetBattleAny
 ## Notes: Something About Pet Battle,Type /hpq to config
 ## Title-zhCN: 宠物品质提示
 ## Notes-zhCN: 提醒野生宠物品质等,输入/hpq设置
 ## Title-zhTW: 戰寵品質提示
 ## Notes-zhTW: 提醒野生戰寵品質等,輸入/hpq設置
 ## DefaultState: disabled
-## Author: HShine
+## Author: QShine
 ## Author-zhCN: 上官晓雾
 ## Author-zhTW: 上官曉霧
 
-## Version: 0.97a
+## X-Date: 2012-10-28
+## Version: 1.1
 
+## Dependencies: Blizzard_PetJournal, Aurora
 ## SavedVariables: HPetSaves
+
+Localization.lua
+
 HPetBattleAny.lua
+modules\Config.lua
+modules\Hook.lua
+modules\Search.lua
+modules\Ability.lua
