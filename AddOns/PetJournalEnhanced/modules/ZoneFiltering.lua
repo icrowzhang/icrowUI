@@ -1,9 +1,25 @@
-﻿ZoneFiltering = PetJournalEnhanced:NewModule("ZoneFiltering","AceEvent-3.0")
+ZoneFiltering = PetJournalEnhanced:NewModule("ZoneFiltering","AceEvent-3.0")
 local LibPetJournal = LibStub("LibPetJournal-2.0")
 local zoneIDs = PetJournalEnhanced:GetModule("ZoneIDs")
+local L = LibStub("AceLocale-3.0"):GetLocale("PetJournalEnhanced")
+local _
+--Localization constants
+local PET_BATTLE_FIND = L["Pet Battle"]..":"
+local PET_BATTLE_MATCH = L["Pet Battle"]..": (.*)"
+local ZONE_FIND = L["Zone"]..":"
+local ZONE_MATCH = L["Zone"]..": (.*)"
 
+--Pattern matching constants
+local SEPERATOR = ","
+local COLOR_MATCH = "|cFF%x%x%x%x%x%x"
+local NEW_LINE = "|n"
+local CARRIAGE_RETURN = "|r"
+local EMPTY_STRING = ""
+local LINE_SPERATOR = "|"
 
+--fixing blizzards spelling
 ZoneFiltering.zoneFixes = {
+	--enUS
 	["Valley of Four Winds"] = "Valley of the Four Winds",
 	["Booty Bay"] = "The Cape of Stranglethorn",
 	["Terokkar Forest (Fishing Nodes)"] = "Terokkar Forest",
@@ -12,7 +28,12 @@ ZoneFiltering.zoneFixes = {
 	["Lor'danel"] = "Darkshore",
 	["Stormwind"] = "Stormwind City",
 	["Jade Forest"] = "The Jade Forest",
+	--ptBR
+	["Estepes Taolong"] = "Estepes De Taolong",
 }
+
+
+
 
 local function split(self,sep)
         local sep, fields = sep or ":", {}
@@ -48,30 +69,31 @@ function ZoneFiltering:GetZones2Pets()
 end
 
 --returns a list of zones from a sourceTExt
-function ZoneFiltering:GetZones(sourceText,id)
+function ZoneFiltering:GetZones(sourceText)
 	local langauge = GetLocale()
 	local zones = {}
-	sourceText = string.gsub(sourceText, "|n", "|")
-	sourceText = string.gsub(sourceText, "|r", "")
---~ 	sourceText = string.gsub(sourceText, "|cFF%x%x%x%x%x%x","")
-	local splits = split(sourceText,"|")
+	sourceText = string.gsub(sourceText, NEW_LINE, LINE_SPERATOR)
+	sourceText = string.gsub(sourceText, CARRIAGE_RETURN, EMPTY_STRING)
+	sourceText = string.gsub(sourceText, COLOR_MATCH,EMPTY_STRING)
+	local splits = split(sourceText,LINE_SPERATOR)
+
 	for i=1,#splits do
-		if string.find(splits[i],"宠物对战：") then
-			zones = string.match(splits[i], "宠物对战：(.*)")
-			zones = split(zones,"、")
-		elseif string.find(splits[i],"地区：") then
-			zones = string.match(splits[i], "地区：".."(.*)")
-			zones = split(zones,"、")
+		if string.find(splits[i],PET_BATTLE_FIND) then
+			zones = string.match(splits[i], PET_BATTLE_MATCH)
+			zones = split(zones,SEPERATOR)
+		elseif string.find(splits[i],ZONE_FIND) then
+			zones = string.match(splits[i], ZONE_MATCH)
+			zones = split(zones,SEPERATOR)
 		end
 	end
-	local tempz = {}
+
 	for i=1,#zones do
-		if zones[i] then
-			tempz[#tempz+1] = trim(zones[i])
+		zones[i] = trim(zones[i])
+		if self.zoneFixes[zones[i]] then
+			zones[i] = self.zoneFixes[zones[i]]
 		end
 	end
---~ 	if id==412	then print("asd") Ho=tempz;Hsq=zones end
-	return tempz
+	return zones
 end
 
 --Create a zone tree for the menu system and a list of zones to species id's
@@ -97,7 +119,7 @@ function ZoneFiltering:MergeZoneLists(mapping,zoneMap)
 		end
 	end
 
-	local unknown = "未知"
+	local unknown = L["Unknown"]
 	for zone, _ in pairs(zoneMap) do
 		local found = false
 		for continent,_ in pairs(mapping) do
@@ -107,7 +129,6 @@ function ZoneFiltering:MergeZoneLists(mapping,zoneMap)
 			end
 		end
 		if not found then
---~ 		print(zone)
 			if not mapping[unknown] then mapping[unknown] ={} end
 			mapping[unknown][zone] = true
 		end
@@ -180,12 +201,10 @@ function ZoneFiltering:ScanPets()
     local zoneMap = {}
 	for i,id in LibPetJournal:IterateSpeciesIDs() do
         local name, _, _, _, sourceText = C_PetJournal.GetPetInfoBySpeciesID(id)
-			local zones = self:GetZones(sourceText,id)
+			local zones = self:GetZones(sourceText)
 			for j=1,#zones do
 				if not zoneMap[zones[j]] then
-					if zones[j] then
 					zoneMap[zones[j]] = {}
-					end
 				end
 				table.insert(zoneMap[zones[j]],id)
 			end

@@ -4,7 +4,7 @@ local MAX_BALANCED = 1
 local MAX_SPEED = 2
 local MAX_STAMINA = 3
 local MAX_ATTACK = 4
-
+local _
 local Hooked = PetJournalEnhanced:NewModule("Hooked")
 
 function Hooked:Initialize(database)
@@ -90,7 +90,7 @@ function Hooked.PetJournal_ShowPetCard(index)
 	if not PetJournal:IsShown() then return end
 	--print("PetJournal_ShowPetCard")
 	PetJournal_HidePetDropdown();
-	PetJournalPetCard.petIndex = index;
+	PetJournalPetCard.petIndex = index; --original mapping since wow uses this number for caging
 	local owned;
 
 	--modified original function here to use the pet mapping instead
@@ -186,6 +186,7 @@ function Hooked.PetJournal_UpdatePetList()
 	local summonedPetID = C_PetJournal.GetSummonedPetID();
 
 	for i = 1,#petButtons do
+
 		pet = petButtons[i];
 
 		index = offset + i;
@@ -293,7 +294,7 @@ function Hooked.PetJournal_UpdatePetList()
 				pet.subName:SetText(name);
 			else
 				pet.name:SetText(name)
-				--pet.name:SetText(name.." "..index.." org: "..PetJournalEnhanced.petMapping[index].index );
+--~ 				pet.name:SetText(name.." "..index.." org: "..PetJournalEnhanced.petMapping[index].index );
 				pet.name:SetHeight(30);
 				pet.subName:Hide();
 			end
@@ -345,13 +346,8 @@ function Hooked.PetJournal_UpdatePetCard()
 			local r,g,b,hex  = GetItemQualityColor(rarity-1)
 
 			--color names
---~ 			ÐÞ¸´´¦
 			if Hooked.db.display.coloredNames and canBattle then
-				if customName then
-					PetJournalPetCard.PetInfo.subName:SetText("|c"..hex..name.."|r")
-				else
-					PetJournalPetCard.PetInfo.name:SetText("|c"..hex..name.."|r")
-				end
+				PetJournalPetCard.PetInfo.name:SetText("|c"..hex..name.."|r")
 			end
 
 			--display rarity indicator which is hidden by blizzard for some reason for non wild pets.
@@ -374,9 +370,8 @@ function Hooked.PetJournal_UpdatePetLoadOut()
 				local rarity = select(5,C_PetJournal.GetPetStats(petID))
 				local hex  = select(4,GetItemQualityColor(rarity-1))
 				if customName then
---~ 			ÐÞ¸´´¦
 					Pet.subName:SetText("|c"..hex..customName.."|r");
-					Pet.name:SetText(name);
+					Pet.name:SetText("|c"..hex..name.."|r");
 				else
 					Pet.name:SetText("|c"..hex..name.."|r");
 					--pet.name:SetText(name.." "..index.." org: "..PetJournalEnhanced.petMapping[index].index );

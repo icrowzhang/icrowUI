@@ -9,7 +9,15 @@ local ASCENDING =  1
 local DESCENDING = 2
 local USER = nil
 
+local _
+
 PetJournalEnhanced = LibStub("AceAddon-3.0"):NewAddon("PetJournalEnhanced","AceEvent-3.0")
+
+local L = LibStub("AceLocale-3.0"):GetLocale("PetJournalEnhanced")
+
+local function trim(s)
+  return s:match'^%s*(.*%S)' or ''
+end
 
 function PetJournalEnhanced:UpdatePets()
 	if PetJournal:IsShown() then
@@ -123,7 +131,7 @@ function PetJournalEnhanced:CreateOptionsMenu()
 			args = {
 				showPetCount = {
 					order = 1,
-					name = HL["Show unique pet count"],
+					name = L["Show unique pet count"],
 					type = "toggle",
 					set = function(info,val)
 						db.uniquePetCount = val
@@ -133,7 +141,7 @@ function PetJournalEnhanced:CreateOptionsMenu()
 				},
 				showMaxStat = {
 					order = 2,
-					name = HL["Show pets specialization"],
+					name = L["Show pets specialization"],
 					type = "toggle",
 					width = "double",
 					set = function(info,val)
@@ -144,7 +152,7 @@ function PetJournalEnhanced:CreateOptionsMenu()
 				},
 				colorBorders = {
 					order = 2,
-					name = HL["Color pet borders"],
+					name = L["Color pet borders"],
 					type = "toggle",
 					width = "double",
 					set = function(info,val)
@@ -155,7 +163,7 @@ function PetJournalEnhanced:CreateOptionsMenu()
 				},
 				colorName = {
 					order = 2,
-					name = HL["Color pet names"],
+					name = L["Color pet names"],
 					type = "toggle",
 					width = "double",
 					set = function(info,val)
@@ -197,7 +205,7 @@ function PetJournalEnhanced:AddPet(pet)
 	if pet.isOwned then
 		self.pets[pet.petID] = pet
 	else
-		self.pets[pet.name] = pet
+		self.pets[pet.speciesID] = pet
 	end
 end
 
@@ -220,10 +228,123 @@ function PetJournalEnhanced:SetZoneFilter()
 			end
 		end
 	end
+
+
 end
 
-function PetJournalEnhanced:SortPets()
-	if PetJournal:IsShown() then
+function PetJournalEnhanced:Reset()
+	C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_COLLECTED, true)
+	C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_FAVORITES, false);
+	C_PetJournal.SetFlagFilter(LE_PET_JOURNAL_FLAG_NOT_COLLECTED, true);
+	C_PetJournal.AddAllPetTypesFilter();
+	C_PetJournal.AddAllPetSourcesFilter();
+
+	local zoneTree = self.modules.ZoneFiltering.zoneTree
+	for continent,zones in pairs(zoneTree) do
+		for zone,_ in pairs(zones) do
+			zones[zone] = true
+		end
+	end
+
+	self:SetZoneFilter()
+
+	local filtering = self.db.global.filtering
+	local sorting = self.db.global.sorting
+
+	for i=1,#filtering.rarity do
+		filtering.rarity[i] = true
+	end
+
+	for i=1,#filtering.specialization do
+		filtering.specialization[i] = true
+	end
+
+	filtering.currentZone = false
+	filtering.canBattle = true
+	filtering.cantBattle = true
+	filtering.unknownZone = true
+	filtering.canTrade = true
+	filtering.cantTrade = true
+
+
+
+
+	sorting.selection = 2
+	sorting.order = ASCENDING
+	sorting.favoritesFirst = false
+
+	self:UpdatePets()
+end
+
+
+--/run PetJournalEnhanced:Debug("albino snake")
+--/run PetJournalEnhanced:Debug("yellow moth")
+--/run PetJournalEnhanced:Debug("albino snack")
+function PetJournalEnhanced:Debug(petName)
+	petName = trim(petName)
+	print("Begining Debug")
+
+	local FAILED = "|c00FF0000FAILED|r"
+	local SUCCESS = "|c0000FF00SUCCESS|r"
+
+	if IsAddOnLoaded("Pet Theory") then
+		print(FAILED,"Detected Pet theory is installed, Pet journal enhances is not compatible with pet theory")
+	end
+
+	if IsAddOnLoaded("_PetJournalEnhanced") then
+		print(FAILED," a conflicting and outdated install of PetJournal Enhanced was detected, Delete _PetJournalEnhanced from your addons folder")
+	end
+
+	self:InitPetJournal()
+
+	self:Reset()
+
+	print("Settings reset for maximum pets")
+
+	print("Searching blizzard for",petName)
+	local numPets = C_PetJournal.GetNumPets(PetJournal.isWild)
+	local petNameUpper = string.upper(petName)
+	for i=1,numPets do
+		local _, _, _, _, _, _, _, name = C_PetJournal.GetPetInfoByIndex(i, PetJournal.isWild)
+		nameUpper = string.upper(name)
+		if  petNameUpper == nameUpper then
+			print(SUCCESS,"found: ",name,"in blizzard's list at position",i)
+			break
+		end
+		if i==numPets then
+			print(FAILED,"to find:",petName," in blizzards list")
+		end
+	end
+
+	print("Sorting pets")
+	self:SortPets(true)
+
+	print("Searching Pet Journal Enhanced for ",petName)
+	for i=1,#self.petMapping do
+		nameUpper = string.upper(self.petMapping[i].name)
+		if  petNameUpper == nameUpper then
+			print(SUCCESS,"found: ",self.petMapping[i].name,"in Pet Journal Enhanced's list at position",i)
+			print("opening pet journal to ",self.petMapping[i].name)
+			if not PetJournalParent:IsShown() then
+				TogglePetJournal(2)
+			end
+			self.modules.Hooked.PetJournal_ShowPetCard(i)
+			break
+		end
+		if i==#self.petMapping then
+			print(FAILED,"to find:",petName," in Pet Journal Enhanced's list")
+		end
+	end
+
+
+
+	self:UpdatePets()
+	print("End Debug")
+
+end
+
+function PetJournalEnhanced:SortPets(forceSort)
+	if PetJournalParent:IsShown() or forceSort then
 		local db = self.db.global
 		local filtering = db.filtering
 		local numPets = C_PetJournal.GetNumPets(PetJournal.isWild)
@@ -284,7 +405,13 @@ function PetJournalEnhanced:SortPets()
 
 			local exclude = false
 
-			if filtering.canBattle and not canBattle  then
+			if not filtering.cantBattle and not canBattle  then
+				exclude = true
+			elseif not filtering.canBattle and canBattle  then
+				exclude = true
+			elseif not filtering.canTrade and tradable  then
+				exclude = true
+			elseif not filtering.cantTrade and not tradable  then
 				exclude = true
 			elseif filtering.currentZone and not string.find(sourceText, GetZoneText(),1,true) then
 				exclude = true
@@ -296,8 +423,7 @@ function PetJournalEnhanced:SortPets()
 				exclude = true
 			elseif not filtering.unknownZone and not (string.find(sourceText,"Pet Battle:") or string.find(sourceText,"Zone:"))  then
 				exclude = true
-			elseif not filtering.tradable and not tradable then
-				exclude = true
+
 			end
 
 			if not exclude then
@@ -326,13 +452,15 @@ function PetJournalEnhanced:OnInitialize()
 				specialization = {[1]=true,[2]=true,[3]=true,[4]=true},
 				currentZone = false,
 				canBattle =true,
+				cantBattle = true,
 				unknownZone = true,
-				tradable = true,
+				cantTrade = true,
+				canTrade = true,
 			},
 			sorting = {
 				selection = 1,
 				order = ASCENDING,
-				favoritesFirst = true,
+				favoritesFirst = false,
 			},
 		}
 	}
@@ -365,7 +493,7 @@ function PetJournalEnhanced:OnInitialize()
 	self:CreateOptionsMenu()
 
 	local LibPetJournal = LibStub("LibPetJournal-2.0")
-	LibPetJournal.RegisterCallback(PetJournalEnhanced,"PetListUpdated", "ScanPets")
+	LibPetJournal.RegisterCallback(PetJournalEnhanced,"PostPetListUpdated", "ScanPets")
 end
 
  --event handlers
@@ -414,7 +542,9 @@ function PetJournalEnhanced:PET_JOURNAL_LIST_UPDATE()
 end
 
 function PetJournalEnhanced:GetPet(index)
-	return self.petMapping[index].index
+	if self.petMapping[index] then
+		return self.petMapping[index].index
+	end
 end
 
 function PetJournalEnhanced:GetNumPets()
@@ -437,3 +567,7 @@ StaticPopupDialogs["PETJOURNAL_ENHANCED_DUPLICATE"] = {
     exclusive = 1,
     whileDead = 1,
 }
+
+
+
+

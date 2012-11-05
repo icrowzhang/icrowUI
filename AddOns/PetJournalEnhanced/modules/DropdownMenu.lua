@@ -1,8 +1,9 @@
 --partial class definition
 local Hooked = PetJournalEnhanced:GetModule("Hooked")
-
+local _
 local ASCENDING =  1
 local DESCENDING = 2
+local L = LibStub("AceLocale-3.0"):GetLocale("PetJournalEnhanced")
 
 local function __genOrderedIndex( t )
     local orderedIndex = {}
@@ -97,7 +98,7 @@ function Hooked:CreateDropdownMenu(level)
 		info.leftPadding = 0;
 		info.disabled = nil;
 
-		info.text = HL["Can Battle"]
+		info.text = L["Can Battle"]
 		info.func = 	function(_, _, _, value)
 							self.db.filtering.canBattle = not self.db.filtering.canBattle
 							PetJournalEnhanced:UpdatePets()
@@ -106,16 +107,34 @@ function Hooked:CreateDropdownMenu(level)
 		info.isNotRadio = true;
 		UIDropDownMenu_AddButton(info, level)
 
-		info.text = HL["Not Tradable"]
+		info.text = L["Can't Battle"]
 		info.func = 	function(_, _, _, value)
-
-					self.db.filtering.tradable = not self.db.filtering.tradable
-					PetJournalEnhanced:UpdatePets()
-				end
-		info.checked = function() return self.db.filtering.tradable end
+							self.db.filtering.cantBattle = not self.db.filtering.cantBattle
+							PetJournalEnhanced:UpdatePets()
+						end
+		info.checked = function() return self.db.filtering.cantBattle end;
+		info.isNotRadio = true;
 		UIDropDownMenu_AddButton(info, level)
 
-		info.text = HL["Filter pets by current zone"]
+		info.text = L["Can Trade"]
+		info.func = 	function(_, _, _, value)
+
+					self.db.filtering.canTrade = not self.db.filtering.canTrade
+					PetJournalEnhanced:UpdatePets()
+				end
+		info.checked = function() return self.db.filtering.canTrade end
+		UIDropDownMenu_AddButton(info, level)
+
+		info.text = L["Can't Trade"]
+		info.func = 	function(_, _, _, value)
+
+					self.db.filtering.cantTrade = not self.db.filtering.cantTrade
+					PetJournalEnhanced:UpdatePets()
+				end
+		info.checked = function() return self.db.filtering.cantTrade end
+		UIDropDownMenu_AddButton(info, level)
+
+		info.text = L["Filter pets by current zone"]
 		info.func = 	function(_, _, _, value)
 
 					self.db.filtering.currentZone = not self.db.filtering.currentZone
@@ -123,9 +142,6 @@ function Hooked:CreateDropdownMenu(level)
 				end
 		info.checked = function() return self.db.filtering.currentZone end
 		UIDropDownMenu_AddButton(info, level)
-
-
-
 
 		--create sub menu headers
 		info.checked = 	nil;
@@ -142,20 +158,27 @@ function Hooked:CreateDropdownMenu(level)
 		info.value = 2;
 		UIDropDownMenu_AddButton(info, level)
 
-		info.text = HL["Zone Filter"]
+		info.text = L["Zone Filter"]
 		info.value = 3;
 		UIDropDownMenu_AddButton(info, level)
 
-		info.text = HL["Quality"]
+		info.text = L["Quality"]
 		info.value = 6;
 		UIDropDownMenu_AddButton(info, level)
 
-		info.text = HL["Specialization"]
+		info.text = L["Specialization"]
 		info.value = 4;
 		UIDropDownMenu_AddButton(info, level)
 
-		info.text = HL["Sort Options"]
+		info.text = L["Sort Options"]
 		info.value = 5
+		UIDropDownMenu_AddButton(info, level)
+
+		local info = UIDropDownMenu_CreateInfo();
+		info.notCheckable = true
+		info.text = L["Reset Filters"]
+		info.value = 7
+		info.func = function() PetJournalEnhanced:Reset() end
 		UIDropDownMenu_AddButton(info, level)
 	end
 
@@ -268,7 +291,7 @@ function Hooked:CreateDropdownMenu(level)
 			info.keepShownOnClick = true
 			info.checked = false
 			info.isNotRadio = true
-			info.text = HL["Unknown Zone"]
+			info.text = L["Unknown Zone"]
 			info.func = 	function(_, _, _, value)
 						self.db.filtering.unknownZone = not self.db.filtering.unknownZone
 						UIDropDownMenu_Refresh(PetJournalFilterDropDown,1,2)
@@ -317,7 +340,7 @@ function Hooked:CreateDropdownMenu(level)
 						end
 			UIDropDownMenu_AddButton(info, level)
 
-			local specializations = {HL["Balanced"],HL["Fast"],HL["Resilient"],HL["Powerful"]}
+			local specializations = {L["Balanced"],L["Fast"],L["Resilient"],L["Powerful"]}
 			for i=1,4 do
 				info.notCheckable = false;
 				info.keepShownOnClick = true
@@ -337,7 +360,7 @@ function Hooked:CreateDropdownMenu(level)
 
 		elseif UIDROPDOWNMENU_MENU_VALUE == 5 then --sorting menu
 			info.keepShownOnClick = true
-			info.text = HL["Sort favorites to the top"]
+			info.text = L["Sort favorites to the top"]
 			info.func = 	function(_, _, _, value)
 						self.db.sorting.favoritesFirst = not self.db.sorting.favoritesFirst
 						PetJournalEnhanced.SortFunctions = PetJournalEnhanced:GetSortFunctions()
@@ -350,7 +373,7 @@ function Hooked:CreateDropdownMenu(level)
 			UIDropDownMenu_AddButton(info, level)
 
 			info.keepShownOnClick = true
-			info.text = HL["Sort Order:"]
+			info.text = L["Sort Order:"]
 			info.func = nil;
 			info.notCheckable = true
 			UIDropDownMenu_AddButton(info, level)
@@ -358,7 +381,7 @@ function Hooked:CreateDropdownMenu(level)
 			info.notCheckable = false;
 
 
-			local sortTypes = {HL["Level"],HL["Alphabetical"],HL["Pet Type"],HL["Rarity"],HL["Pet Highest Stat"]}--,["Added to Pet Journal"]=SORT_PETID}
+			local sortTypes = {L["Level"],L["Alphabetical"],L["Pet Type"],L["Rarity"],L["Pet Highest Stat"]}--,["Added to Pet Journal"]=SORT_PETID}
 
 			--create sort menu options
 			for i=1,#sortTypes do
@@ -383,13 +406,13 @@ function Hooked:CreateDropdownMenu(level)
 			info.isNotRadio = false
 
 
-			info.text = HL["Sort Direction:"]
+			info.text = L["Sort Direction:"]
 			info.func = nil;
 			info.notCheckable = true
 			UIDropDownMenu_AddButton(info, level)
 
 			info.notCheckable = false;
-			info.text = HL["Sort Ascending"]
+			info.text = L["Sort Ascending"]
 			info.func = 	function(_, _, _, value)
 
 						self.db.sorting.order = ASCENDING
@@ -399,7 +422,7 @@ function Hooked:CreateDropdownMenu(level)
 			info.checked = function() return self.db.sorting.order ==  ASCENDING end
 			UIDropDownMenu_AddButton(info, level)
 
-			info.text = HL["Sort Descending"]
+			info.text = L["Sort Descending"]
 			info.func = 	function(_, _, _, value)
 						self.db.sorting.order = DESCENDING
 						UIDropDownMenu_Refresh(PetJournalFilterDropDown,1,2)
@@ -448,9 +471,6 @@ function Hooked:CreateDropdownMenu(level)
 			end
 		end
 	end
-
-
-
 
 	if level == 3  then
 		local zoneTree = self.zoneTree

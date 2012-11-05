@@ -7,10 +7,10 @@
 ## Notes-zhTW: 可自定義戰寵圖鑑中的戰寵排序.
 ## DefaultState: disabled
 ## Author: nullberri(汉化:上官晓雾)
-## Version: 2.4.5
+## Version: 2.5.1
 ## X-Date: 2012-7-25
 ## X-Category: Pet Journal
-## X-Localizations: enUS
+## X-Localizations: enUS, ptBR (partial)
 ## SavedVariables: PetJournalEnhancedDB
 ## Dependencies: Blizzard_PetJournal
 
@@ -23,12 +23,13 @@ libs\AceDB-3.0\AceDB-3.0.xml
 libs\AceEvent-3.0\AceEvent-3.0.xml
 libs\LibPetJournal-2.0\LibPetJournal-2.0.lua
 libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\AceLocale-3.0\AceLocale-3.0.xml
 
 
+Localization.lua
 PetJournalEnhanced.lua
 modules\HookedFunctions.lua
 modules\DropdownMenu.lua
 modules\UniqueCount.lua
 modules\ZoneIDs.lua
 modules\ZoneFiltering.lua
-localization.lua
