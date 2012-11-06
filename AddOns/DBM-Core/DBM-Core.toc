@@ -7,7 +7,6 @@
 ## SavedVariablesPerCharacter: DBM_SavedOptions, DBT_SavedOptions
 ## LoadOnDemand: 0
 ## DefaultState: enabled
-## RequiredDeps: !UIDropDownMenuFix
 ## Author: Tandanu and Nitram
 ## X-Website: http://www.deadlybossmods.com
 
@@ -20,6 +19,7 @@ DBT-Template.xml
 DBT.lua
 DBM-Core.lua
 DBM-Arrow.lua
+DBM-Flash.lua
 DBM-RangeCheck.lua
 DBM-BossHealth.lua
 DBM-BossHealth.xml
