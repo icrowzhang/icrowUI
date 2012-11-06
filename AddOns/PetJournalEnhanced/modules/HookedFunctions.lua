@@ -237,9 +237,6 @@ function Hooked.PetJournal_UpdatePetList()
 				if Hooked.db.display.coloredNames and canBattle and rarity then
 					local r, g, b,hex  = GetItemQualityColor(rarity-1)
 					name = "|c"..hex..name.."|r"
-					if customName then
-						customName = "|c"..hex..customName.."|r"
-					end
 				end
 
 				pet.dragButton.levelBG:SetShown(canBattle);
@@ -319,10 +316,6 @@ function Hooked.PetJournal_UpdatePetList()
 				pet.selected = false;
 				pet.selectedTexture:Hide()
 			end
-
-
-
-
 		else
 			pet:Hide();
 		end
@@ -347,7 +340,11 @@ function Hooked.PetJournal_UpdatePetCard()
 
 			--color names
 			if Hooked.db.display.coloredNames and canBattle then
-				PetJournalPetCard.PetInfo.name:SetText("|c"..hex..name.."|r")
+				if customName then
+					PetJournalPetCard.PetInfo.subName:SetText("|c"..hex..name.."|r")
+				else
+					PetJournalPetCard.PetInfo.name:SetText("|c"..hex..name.."|r")
+				end
 			end
 
 			--display rarity indicator which is hidden by blizzard for some reason for non wild pets.
@@ -370,11 +367,10 @@ function Hooked.PetJournal_UpdatePetLoadOut()
 				local rarity = select(5,C_PetJournal.GetPetStats(petID))
 				local hex  = select(4,GetItemQualityColor(rarity-1))
 				if customName then
-					Pet.subName:SetText("|c"..hex..customName.."|r");
-					Pet.name:SetText("|c"..hex..name.."|r");
+					Pet.subName:SetText("|c"..hex..name.."|r");
+					Pet.name:SetText(customName);
 				else
 					Pet.name:SetText("|c"..hex..name.."|r");
-					--pet.name:SetText(name.." "..index.." org: "..PetJournalEnhanced.petMapping[index].index );
 				end
 			end
 		end
