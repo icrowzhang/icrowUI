@@ -601,35 +601,36 @@ function ReforgeLite:InitPresets ()
       list = UIDROPDOWNMENU_MENU_VALUE
     end
     info.notCheckable = true
-
-    for k, v in pairs (list) do
-      if type (v) == "function" then
-        v = v ()
-      end
-      info.text = k:gsub("<(.*)>",function(s) return ReforgeLiteLocale[s] end)
-      info.value = v
-      if v.caps or v.weights or v.leaf or v.prio then
-        info.func = function ()
-          CloseDropDownMenus ()
-          if v.leaf == "import" then
-            self:SetStatWeights (v.weights, v.caps, v.prio)
-          else
-            self:SetStatWeights (v.weights, v.caps or {}, v.prio)
-          end
-        end
-        info.hasArrow = nil
-        info.keepShownOnClick = nil
-      else
-        info.func = nil
-        if next (v) then
-          info.hasArrow = true
-        else
-          info.hasArrow = nil
-        end
-        info.keepShownOnClick = true
-      end
-      UIDropDownMenu_AddButton (info, level)
-    end
+	if list then
+		for k, v in pairs (list) do
+		  if type (v) == "function" then
+			v = v ()
+		  end
+		  info.text = k:gsub("<(.*)>",function(s) return ReforgeLiteLocale[s] end)
+		  info.value = v
+		  if v.caps or v.weights or v.leaf or v.prio then
+			info.func = function ()
+			  CloseDropDownMenus ()
+			  if v.leaf == "import" then
+				self:SetStatWeights (v.weights, v.caps, v.prio)
+			  else
+				self:SetStatWeights (v.weights, v.caps or {}, v.prio)
+			  end
+			end
+			info.hasArrow = nil
+			info.keepShownOnClick = nil
+		  else
+			info.func = nil
+			if next (v) then
+			  info.hasArrow = true
+			else
+			  info.hasArrow = nil
+			end
+			info.keepShownOnClick = true
+		  end
+		  UIDropDownMenu_AddButton (info, level)
+		end
+	end
   end
 
   self.methodPresetMenu = CreateFrame ("Frame", "ReforgeLiteMethodPresetMenu")
