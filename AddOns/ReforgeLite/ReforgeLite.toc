@@ -1,11 +1,11 @@
-## Interface: 50001
+ï»¿## Interface: 50001
 ## Author: d07.RiV (Iroared)
 ## Title: |cff3399FF[PVE]|r ReforgeLite
-## Title-zhCN: |cff3399FF[PVE]|r Ò»¼üÖØÖı
-## Title-zhTW: |cff3399FF[PVE]|r Ò»æIÖØèT
+## Title-zhCN: |cff3399FF[PVE]|r ä¸€é”®é‡é“¸
+## Title-zhTW: |cff3399FF[PVE]|r ä¸€éµé‡é‘„
 ## Notes: Calculates optimal reforging for given weights/caps.
-## Notes-zhCN: ¸ù¾İ¸ø¶¨µÄÊôĞÔÆÀ·Ö¼°ãĞÖµ, ¼ÆËã³ö×îÓÅÖØÖı·½°¸
-## Notes-zhTW: ¸ù“ş½o¶¨µÄŒÙĞÔÔu·Ö¼°é“Öµ, Ó‹Ëã³ö×îƒÖØèT·½°¸
+## Notes-zhCN: æ ¹æ®ç»™å®šçš„å±æ€§è¯„åˆ†åŠé˜ˆå€¼, è®¡ç®—å‡ºæœ€ä¼˜é‡é“¸æ–¹æ¡ˆ
+## Notes-zhTW: æ ¹æ“šçµ¦å®šçš„å±¬æ€§è©•åˆ†åŠé–¾å€¼, è¨ˆç®—å‡ºæœ€å„ªé‡é‘„æ–¹æ¡ˆ
 ## DefaultState: disabled
 ## Version: 1.19
 ## SavedVariables: ReforgeLiteDB
