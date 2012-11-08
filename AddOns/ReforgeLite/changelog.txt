@@ -1,3 +1,39 @@
+** v1.19
+
+- Fixed a couple lua errors reported earlier
+- Fixed a couple settings not getting saved as reported by Tharai
+
+** v1.18
+
+- Fixed a critical bug that caused reforging to get stuck reforging the same item
+- Expertise to hit should be working now
+
+** v1.17
+
+- Fixed bugs in ReforgeLite.lua:1257 and ReforgeEngine.lua:44
+
+** v1.16
+
+- Fixed some more bugs, this time I actually did some testing and it seems to be working fine
+
+** v1.15
+
+- Fixed another small bug..
+
+** v1.14
+
+- Fixed a small bug in 1.13 that prevented loading presets
+
+** v1.13
+
+- Partially reworked interface, removed unneeded buttons.
+ Speed slider is gone (optimal speed is automatically determinted), saved result section is gone
+ (main result area now shows the best overall result).
+- Tanking mode was removed as CTC cap is gone and tanks will be more interested in other stats now
+- Added priority mode for more user friendly configuration
+- Updated all presets
+- Fixed some taint issues (hopefully?)
+
 ** v1.12
 
 - Now automatically deletes relic reforge data

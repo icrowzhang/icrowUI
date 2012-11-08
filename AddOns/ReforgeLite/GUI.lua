@@ -3,6 +3,15 @@
 
 local GUI = {}
 
+local UIDropDownMenu_CreateInfo = XUIDropDownMenu_CreateInfo
+local UIDropDownMenu_SetSelectedValue = XUIDropDownMenu_SetSelectedValue
+local UIDropDownMenu_AddButton = XUIDropDownMenu_AddButton
+local UIDropDownMenu_SetText = XUIDropDownMenu_SetText
+local UIDropDownMenu_Initialize = XUIDropDownMenu_Initialize
+local UIDropDownMenu_SetSelectedValue = XUIDropDownMenu_SetSelectedValue
+local UIDropDownMenu_JustifyText = XUIDropDownMenu_JustifyText
+local UIDropDownMenu_SetWidth = XUIDropDownMenu_SetWidth
+
 GUI.widgetCount = 0
 function GUI:GenerateWidgetName ()
   self.widgetCount = self.widgetCount + 1
@@ -46,10 +55,10 @@ function GUI:CreateEditBox (parent, width, height, default, setter)
       box:ClearFocus ()
     end)
     box.Recycle = function (box)
+      box:Hide ()
       box:SetScript ("OnEditFocusLost", nil)
       box:SetScript ("OnEnter", nil)
       box:SetScript ("OnLeave", nil)
-      box:Hide ()
       table.insert (self.editBoxes, box)
     end
   end
@@ -81,34 +90,34 @@ function GUI:CreateDropdown (parent, values, default, setter, width)
     local name = self:GenerateWidgetName ()
     sel = CreateFrame ("Frame", name, parent, "XUIDropDownMenuTemplate")
     sel.Initialize = function (self)
-      local info = XUIDropDownMenu_CreateInfo ()
+      local info = UIDropDownMenu_CreateInfo ()
       for i = 1, #self.values do
         info.text = self.values[i].name
         info.func = function (inf)
-          XUIDropDownMenu_SetSelectedValue (self, inf.value)
+          UIDropDownMenu_SetSelectedValue (self, inf.value)
           self.value = inf.value
           if self.setter then self.setter (inf.value) end
         end
         info.value = self.values[i].value
         info.checked = (self.value == self.values[i].value)
-        XUIDropDownMenu_AddButton (info)
+        UIDropDownMenu_AddButton (info)
       end
     end
     sel.SetValue = function (self, value)
       self.value = value
       for i = 1, #self.values do
         if self.values[i].value == value then
-          XUIDropDownMenu_SetText (self, self.values[i].name)
+          UIDropDownMenu_SetText (self, self.values[i].name)
           return
         end
       end
-      XUIDropDownMenu_SetText (self, "")
+      UIDropDownMenu_SetText (self, "")
     end
     sel:SetScript ("OnShow", function (self)
-      XUIDropDownMenu_Initialize (self, self.Initialize)
-      XUIDropDownMenu_SetSelectedValue (self, self.value)
+      UIDropDownMenu_Initialize (self, self.Initialize)
+      UIDropDownMenu_SetSelectedValue (self, self.value)
     end)
-    XUIDropDownMenu_JustifyText (sel, "LEFT")
+    UIDropDownMenu_JustifyText (sel, "LEFT")
     sel:SetHeight (50)
     _G[name .. "Left"]:SetHeight (50)
     _G[name .. "Middle"]:SetHeight (50)
@@ -136,10 +145,10 @@ function GUI:CreateDropdown (parent, values, default, setter, width)
   sel.value = default
   sel.values = values
   sel.setter = setter
-  XUIDropDownMenu_Initialize (sel, sel.Initialize)
+  UIDropDownMenu_Initialize (sel, sel.Initialize)
   sel:SetValue (default)
   if width then
-    XUIDropDownMenu_SetWidth (sel, width)
+    UIDropDownMenu_SetWidth (sel, width)
   end
   return sel
 end
@@ -606,8 +615,6 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
     align = align or "CENTER"
     color = color or {1, 1, 1}
     font = font or "GameFontNormalSmall"
-    offsX = offsX or 0
-    offsY = offsY or 0
     
     if self.cells[i][j] and not self.cells[i][j].istag then
       if type (self.cells[i][j].Recycle) == "function" then
@@ -636,8 +643,8 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
     self.cells[i][j]:SetTextColor (color[1], color[2], color[3])
     self.cells[i][j]:SetText (text)
     self.cells[i][j].align = align
-    self.cells[i][j].offsX = offsX
-    self.cells[i][j].offsY = offsY
+    self.cells[i][j].offsX = 0
+    self.cells[i][j].offsY = 0
     self:AlignCell (i, j)
   end
   

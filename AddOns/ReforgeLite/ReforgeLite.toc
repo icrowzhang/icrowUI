@@ -1,22 +1,28 @@
-ï»¿## Interface: 50001
+## Interface: 50001
 ## Author: d07.RiV (Iroared)
 ## Title: |cff3399FF[PVE]|r ReforgeLite
-## Title-zhCN: |cff3399FF[PVE]|r ä¸€é”®é‡é“¸
-## Title-zhTW: |cff3399FF[PVE]|r ä¸€éµé‡é‘„
+## Title-zhCN: |cff3399FF[PVE]|r Ò»¼üÖØÖı
+## Title-zhTW: |cff3399FF[PVE]|r Ò»æIÖØèT
 ## Notes: Calculates optimal reforging for given weights/caps.
-## Notes-zhCN: æ ¹æ®ç»™å®šçš„å±æ€§è¯„åˆ†åŠé˜ˆå€¼, è®¡ç®—å‡ºæœ€ä¼˜é‡é“¸æ–¹æ¡ˆ
-## Notes-zhTW: æ ¹æ“šçµ¦å®šçš„å±¬æ€§è©•åˆ†åŠé–¾å€¼, è¨ˆç®—å‡ºæœ€å„ªé‡é‘„æ–¹æ¡ˆ
+## Notes-zhCN: ¸ù¾İ¸ø¶¨µÄÊôĞÔÆÀ·Ö¼°ãĞÖµ, ¼ÆËã³ö×îÓÅÖØÖı·½°¸
+## Notes-zhTW: ¸ù“ş½o¶¨µÄŒÙĞÔÔu·Ö¼°é“Öµ, Ó‹Ëã³ö×îƒÖØèT·½°¸
 ## DefaultState: disabled
-## Version: 1.12
+## Version: 1.19
 ## SavedVariables: ReforgeLiteDB
 ## Dependencies: !UIDropDownMenuFix
-## X-Curse-Packaged-Version: v1.12
+## X-Curse-Packaged-Version: v1.13
+## X-Curse-Project-Name: ReforgeLite
+## X-Curse-Project-ID: reforgelite
+## X-Curse-Repository-ID: wow/reforgelite/mainline
+## X-Curse-Packaged-Version: v1.19
 ## X-Curse-Project-Name: ReforgeLite
 ## X-Curse-Project-ID: reforgelite
 ## X-Curse-Repository-ID: wow/reforgelite/mainline
 
 Localization.lua
+Scaling.lua
 GUI.lua
 ReforgeLite.lua
 ReforgeEngine.lua
 Presets.lua
+TaskUI.lua
