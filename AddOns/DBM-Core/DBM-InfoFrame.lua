@@ -42,15 +42,15 @@
 --    * blip_8.ogg by Corsica_S (http://www.freesound.org/usersViewSingle.php?id=7037)
 --  The full of text of the license can be found in the file "Sounds\Creative Commons Sampling Plus 1.0.txt".
 
-local UIDropDownMenu_CreateInfo = XUIDropDownMenu_CreateInfo
-local UIDropDownMenu_AddButton = XUIDropDownMenu_AddButton
-local UIDropDownMenu_Initialize = XUIDropDownMenu_Initialize
-local ToggleDropDownMenu = XToggleDropDownMenu
-
 ---------------
 --  Globals  --
 ---------------
 DBM.InfoFrame = {}
+
+local UIDropDownMenu_CreateInfo = XUIDropDownMenu_CreateInfo
+local UIDropDownMenu_AddButton = XUIDropDownMenu_AddButton
+local UIDropDownMenu_Initialize = XUIDropDownMenu_Initialize
+local ToggleDropDownMenu = XToggleDropDownMenu
 
 --------------
 --  Locals  --
@@ -65,6 +65,7 @@ local maxlines
 local infoFrameThreshold 
 local pIndex
 local extraPIndex
+local lowestFirst
 local iconModifier
 local headerText = "DBM Info Frame"	-- this is only used if DBM.InfoFrame:SetHeader(text) is not called before :Show()
 local currentEvent
@@ -123,7 +124,7 @@ end
 function createFrame()
 	local elapsed = 0
 	local frame = CreateFrame("GameTooltip", "DBMInfoFrame", UIParent, "GameTooltipTemplate")
-	dropdownFrame = CreateFrame("Frame", "DBMInfoFrameDropdown", frame, "XUIDropDownMenuTemplate")
+	dropdownFrame = CreateFrame("Frame", "DBMInfoFrameDropdown", frame, "UIDropDownMenuTemplate")
 	frame:SetFrameStrata("DIALOG")
 	frame:SetPoint(DBM.Options.InfoFramePoint, UIParent, DBM.Options.InfoFramePoint, DBM.Options.InfoFrameX, DBM.Options.InfoFrameY)
 	frame:SetHeight(maxlines*12)
@@ -482,7 +483,7 @@ local function updatePlayerDebuffStacks()
 		for i = 1, GetNumGroupMembers() do
 			local uId = "raid"..i
 			if UnitDebuff(uId, GetSpellInfo(infoFrameThreshold)) and not UnitIsDeadOrGhost(uId) then
-				if (UnitName(uId) == UnitName("boss1target")) or UnitDebuff(uId, GetSpellInfo(122835)) then
+				if UnitName(uId) == UnitName("boss1target") then
 					UnitBossTarget = UnitName(uId).." |cFFFF0000← boss|r"
 				else
 					UnitBossTarget = UnitName(uId)
@@ -679,9 +680,13 @@ function infoFrame:Show(maxLines, event, threshold, ...)
 	pIndex = select(1, ...)		-- used as 'filter' for player buff stacks
 	iconModifier = select(2, ...)
 	extraPIndex = select(3, ...)
+	lowestFirst = select(4, ...)
 	currentEvent = event
 	frame = frame or createFrame()
 
+	if lowestFirst then
+		sortingAsc = true
+	end
 	if event == "health" then
 		sortingAsc = true	-- Person who misses the most HP to be at threshold is listed on top
 		updateHealth()
