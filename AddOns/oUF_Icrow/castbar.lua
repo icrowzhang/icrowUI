@@ -23,8 +23,8 @@ local NumbFont = M.media.font								-- 施法时间数字字体
 local player_castpos = {"BOTTOM",UIParent,"BOTTOM",0,180}	-- 玩家施法条位置
 local target_castpos = {"CENTER",UIParent,"CENTER",0,140}	-- 目标施法条位置
 local focus_castpos = {"CENTER",UIParent,"CENTER",-335,140}	-- 焦点施法条位置
-local pet_castpos = {"CENTER",UIParent,"CENTER",10,120}		-- 宠物施法条位置
-local other_castpos = {"CENTER",UIParent,"CENTER",10,120}	-- 其他施法条位置
+local pet_castpos = {"CENTER",UIParent,"CENTER",0,110}		-- 宠物施法条位置
+local other_castpos = {"CENTER",UIParent,"CENTER",0,110}	-- 其他施法条位置
 
 --- ----------------------------------
 --> Function
@@ -228,13 +228,16 @@ function CreateCastBar(f, unit)
 	  CastingBarFrame:UnregisterAllEvents()
 	  CastingBarFrame.Show = CastingBarFrame.Hide
 	  CastingBarFrame:Hide()
+	  PetCastingBarFrame:UnregisterAllEvents()
+	  PetCastingBarFrame.Show = PetCastingBarFrame.Hide
+	  PetCastingBarFrame:Hide()
 	elseif unit == "target" then
 	  TargetFrameSpellBar:UnregisterAllEvents()
 	  TargetFrameSpellBar.Show = TargetFrameSpellBar.Hide
 	  TargetFrameSpellBar:Hide()
 	elseif unit == "focus" then
 	  FocusFrameSpellBar:UnregisterAllEvents()
-	  FocusFrameSpellBar.Show = TargetFrameSpellBar.Hide
+	  FocusFrameSpellBar.Show = FocusFrameSpellBar.Hide
 	  FocusFrameSpellBar:Hide()
 	end
 	
