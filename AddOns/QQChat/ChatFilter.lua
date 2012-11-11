@@ -21,10 +21,10 @@ local Config = {
 	["FilterPetTalentSpec"] = true, --Filter the messages:"Your pet has learned/unlearned..." // 不显示“你的宠物学会了/忘却了…”
 	
 	["MergeAchievement"] = true, --Merge the messages:"...has earned the achievement..." // 合并显示获得成就
-	["MergeManufacturing"] = false, --Merge the messages:"You has created..." // 合并显示“你制造了…”
+	["MergeManufacturing"] = true, --Merge the messages:"You has created..." // 合并显示“你制造了…”
 	
 	["FilterAuctionMSG"] = true, --Filter the messages:"Auction created/cancelled."// 过滤“已开始拍卖/拍卖取消.”
-	["FilterDuelMSG"] = false, --Filter the messages:"... has defeated/fled from ... in a duel." // 过滤“...在决斗中战胜了...”
+	["FilterDuelMSG"] = true, --Filter the messages:"... has defeated/fled from ... in a duel." // 过滤“...在决斗中战胜了...”
 	
 	["FilterAdvertising"] = true, --Filter the advertising messages. // 过滤广告信息
 	["AllowMatchs"] = 2, --How many words can be allowd to use. // 允许的关键字配对个数
@@ -147,6 +147,7 @@ end
 
 local createmsg = deformat(LOOT_ITEM_CREATED_SELF)
 local createmultimsg = deformat(LOOT_ITEM_CREATED_SELF_MULTIPLE)
+local learnpassivemsg = deformat(ERR_LEARN_PASSIVE_S)
 local learnspellmsg = deformat(ERR_LEARN_SPELL_S)
 local learnabilitymsg = deformat(ERR_LEARN_ABILITY_S)
 local unlearnspellmsg = deformat(ERR_SPELL_UNLEARNED_S)
@@ -508,7 +509,7 @@ end
 local function ChatFilter_TalentSpec(self, event, msg)
 	if (not Config.Enabled) then return end
 	if (Config.MergeTalentSpec) then
-		local learnID = strmatch(msg, learnspellmsg) or strmatch(msg, learnabilitymsg)
+		local learnID = strmatch(msg, learnspellmsg) or strmatch(msg, learnabilitymsg) or strmatch(msg, learnpassivemsg)
 		local unlearnID = strmatch(msg, unlearnspellmsg)
 		if (learnID and changingspec) then
 			learnID = tonumber(strmatch(learnID, "spell:(%d+)"))
