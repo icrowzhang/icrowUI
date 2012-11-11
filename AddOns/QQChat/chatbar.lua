@@ -102,7 +102,7 @@ function CH:LoadChatbar()
 	end)
 	tinsert(children, statreport)
 	
-	if (GetLocale() == "zhCN" or GetLocale == "zhTW") then
+	if (GetLocale() == "zhCN" or GetLocale() == "zhTW") then
 		-- 大脚世界频道
 		local big = CreateFrame("Button", "Bigfootcannel", self.chatbar)
 		place(big, 9, self.chatbar)
