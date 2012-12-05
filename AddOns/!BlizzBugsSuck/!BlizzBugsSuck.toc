@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: BlizzBugsSuck 
 ## Title-zhCN: 暴雪漏洞修正库
 ## Title-zhTW: 暴雪漏洞修正庫

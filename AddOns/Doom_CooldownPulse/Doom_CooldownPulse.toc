@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: Doom_CooldownPulse
 ## Title-zhCN: 冷却完成提示
 ## Title-zhTW: 冷卻完成提示

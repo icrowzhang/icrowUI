@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: RangeDisplay Options
 ## Title-zhCN: 距离监视 |cff69ccf0选项|r
 ## Title-zhTW: 距離監視 |cff69ccf0選項|r

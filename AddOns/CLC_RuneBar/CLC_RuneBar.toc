@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Author: Nu7a (Threk), icrow
 ## Version: 5.0.4
 ## Title: |CFFC41E3B[DK]|r CLC Rune Bar

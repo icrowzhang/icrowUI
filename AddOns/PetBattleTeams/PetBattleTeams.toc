@@ -1,11 +1,10 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: PetBattleTeams
 ## Title-zhCN: 宠物战队管理
 ## Title-zhTW: 戰寵隊伍管理
 ## Notes: Creates 14 savable team slots.
 ## Notes-zhCN: 可创建并保存自定义的宠物战队.
 ## Notes-zhTW: 可創建並保存自定義的戰寵隊伍.
-## DefaultState: disabled
 ## Author: Nullberri
 ## Version: 2.4.10
 ## X-Date: 2012-7-17

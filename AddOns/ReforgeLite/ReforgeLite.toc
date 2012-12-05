@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Author: d07.RiV (Iroared)
 ## Title: |cff3399FF[PVE]|r ReforgeLite
 ## Title-zhCN: |cff3399FF[PVE]|r 一键重铸

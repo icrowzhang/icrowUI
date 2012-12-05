@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: Aurora
 ## Title-zhCN: |cFF71D5FF美化 -|r 全局
 ## Title-zhTW: |cFF71D5FF美化 -|r 全局
@@ -6,7 +6,7 @@
 ## Notes-zhCN: 全局美化插件
 ## Notes-zhTW: 全局美化插件
 ## Author: Haleth/Freethinker
-## Version: 5.0.4
+## Version: 4.3a
 ## SavedVariables: AuroraConfig
 
 aurora.lua

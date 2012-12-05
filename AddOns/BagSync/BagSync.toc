@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: BagSync
 ## Title-zhCN: 物品记录
 ## Title-zhTW: 物品記錄

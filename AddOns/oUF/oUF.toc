@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: oUF
 ## Title-zhCN: |cFFC3C3C3oUF|r 基本库
 ## Title-zhTW: |cFFC3C3C3oUF|r 基本庫

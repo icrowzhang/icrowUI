@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: |cffee0000s|rBinder
 ## Title-zhCN: 点击施法
 ## Title-zhTW: 點擊施法

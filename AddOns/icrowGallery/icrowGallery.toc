@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: |cFF71D5FFicrow|rGallery
 ## Title-zhCN: 小东西合集
 ## Title-zhTW: 小東西合集

@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: |cFF71D5FF[Mage]|r IgniteDamage
 ## Title-zhCN: |cFF71D5FF[法师]|r 点燃伤害
 ## Title-zhTW: |cFF71D5FF[法師]|r 點燃傷害

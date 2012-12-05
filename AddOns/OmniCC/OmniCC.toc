@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: OmniCC
 ## Title-zhCN: 技能冷却数字
 ## Title-zhTW: 技能冷卻數字

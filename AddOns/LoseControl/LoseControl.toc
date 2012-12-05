@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: |cffee0000[PVP]|r LoseControl
 ## Title-zhCN: |cffee0000[PVP]|r 受控监视
 ## Title-zhTW: |cffee0000[PVP]|r 受控監視

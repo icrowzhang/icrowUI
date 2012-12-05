@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Author: Allez
 ## Title: |cff777777al|rDamageMeter
 ## Title-zhCN: 伤害统计

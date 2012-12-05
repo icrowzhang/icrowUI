@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: mono|cffffffffMinimap|r
 ## Title-zhCN: |cFF71D5FF美化 -|r 小地图
 ## Title-zhTW: |cFF71D5FF美化 -|r 小地圖

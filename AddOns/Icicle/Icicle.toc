@@ -1,4 +1,4 @@
-## Interface: 50001
+## Interface: 50100
 ## Title: |cffee0000[PVP]|r Icicle
 ## Title-zhCN: |cffee0000[PVP]|r 敌对冷却监视
 ## Title-zhTW: |cffee0000[PVP]|r 敵對冷卻監視
