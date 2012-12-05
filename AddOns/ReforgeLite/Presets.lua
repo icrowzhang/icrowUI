@@ -309,8 +309,8 @@ ReforgeLite.presets = {
       prio = {
         {stat = StatHit, preset = SpellHitCap},
         {stat = StatCrit},
-        {stat = StatMastery},
         {stat = StatHaste},
+        {stat = StatMastery},
       },
     },
     ["<Frost>"] = {
