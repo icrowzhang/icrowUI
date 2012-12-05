@@ -27,6 +27,8 @@ end
 
 -------------------------------------------------------------------------------
 local spellIds = { 
+   -- PvE
+   [122224] = "PvE",
    -- Death Knight 
    [108200] = "Snare",      -- Remorseless Winter 
    [115001] = "CC",      -- Remorseless Winter Stun 
@@ -310,7 +312,7 @@ local DBdefaults = {
 		Immune		= true, --100
 		ImmuneSpell	= true, -- 90
 		CC		= true,  -- 80
-		PvE		= false,  -- 70
+		PvE		= true,  -- 70
 		Silence		= true,  -- 60
 		Disarm		= false,  -- 50
 		Root		= false, -- 40
