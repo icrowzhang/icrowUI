@@ -46,7 +46,7 @@ end
 local function UpdateAbsorb(self, elapsed)
 	self.elapsed = (self.elapsed or 0) - elapsed
 	if self.elapsed < 0 then
-		self.absorb = select(14, UnitBuff("player", GetSpellInfo(self.id)))
+		self.absorb = select(15, UnitBuff("player", GetSpellInfo(self.id))) or 0
 		self.text:SetText(self.absorb)
 		self.elapsed = 0.3
 	end

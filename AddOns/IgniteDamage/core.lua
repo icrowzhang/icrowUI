@@ -42,7 +42,7 @@ IgniteDamage:SetScript("OnEvent", function(self, event, ...)
 		local unitID = ...
 		if unitID == "target" then
 			if UnitDebuff("target", GetSpellInfo(12654), nil, "PLAYER") then
-				local damage = select(14, UnitDebuff("target", GetSpellInfo(12654), nil, "PLAYER"))
+				local damage = select(15, UnitDebuff("target", GetSpellInfo(12654), nil, "PLAYER"))
 				if damage and damage > cfg.threshold then
 					self.text:SetText(format("%d", damage))
 				else
@@ -56,15 +56,15 @@ IgniteDamage:SetScript("OnEvent", function(self, event, ...)
 		local unitID, _, _, _, spellID = ...
 		if unitID == "player" and spellID == 11129 then
 			self.text:SetVertexColor(1, 0, 0)
-			self.timer = 0.1
+			self.timer = 1.0
 			self:SetScript("OnUpdate", function(self, elapsed)
 				self.timer = self.timer - elapsed
 				if self.timer < 0 then
 					local start, expires = GetSpellCooldown(11129)
-					if start == 0 then
+					if start < 0.01 then
 						CombustionReady()
 					else
-						self.timer = start + expires - GetTime()
+						self.timer = start + expires - GetTime() + 0.01
 					end
 				end
 			end)
