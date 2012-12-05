@@ -20,8 +20,8 @@ if (GetLocale() == "zhTW") then
   CHAT_PARTY_GUIDE_GET =  "|Hchannel:PARTY|h[向導]|h %s: "
 
   --战场
-  CHAT_BATTLEGROUND_GET = "|Hchannel:BATTLEGROUND|h[戰]|h %s: "
-  CHAT_BATTLEGROUND_LEADER_GET = "|Hchannel:BATTLEGROUND|h[指揮]|h %s: "
+  CHAT_INSTANCE_CHAT_GET = "|Hchannel:BATTLEGROUND|h[戰]|h %s: "
+  CHAT_INSTANCE_CHAT_LEADER_GET = "|Hchannel:BATTLEGROUND|h[指揮]|h %s: "
 
   CHAT_FLAG_AFK = "[暫離] "
   CHAT_FLAG_DND = "[勿擾] "
@@ -44,8 +44,8 @@ elseif (GetLocale() == "zhCN") then
   CHAT_PARTY_GUIDE_GET =  "|Hchannel:PARTY|h[向导]:|h %s: "
 
   --战场
-  CHAT_BATTLEGROUND_GET = "|Hchannel:BATTLEGROUND|h[战]|h %s: "
-  CHAT_BATTLEGROUND_LEADER_GET = "|Hchannel:BATTLEGROUND|h[指挥]|h %s: "
+  CHAT_INSTANCE_CHAT_GET = "|Hchannel:BATTLEGROUND|h[战]|h %s: "
+  CHAT_INSTANCE_CHAT_LEADER_GET = "|Hchannel:BATTLEGROUND|h[指挥]|h %s: "
 
   --flags
   CHAT_FLAG_AFK = "[暂离] "
@@ -61,8 +61,8 @@ else
   CHAT_PARTY_GET = "|Hchannel:PARTY|h[P]|h %s "
   CHAT_PARTY_LEADER_GET =  "|Hchannel:PARTY|h[PL]|h %s "
   CHAT_PARTY_GUIDE_GET =  "|Hchannel:PARTY|h[PG]|h %s "
-  CHAT_BATTLEGROUND_GET = "|Hchannel:BATTLEGROUND|h[BG]|h %s "
-  CHAT_BATTLEGROUND_LEADER_GET = "|Hchannel:BATTLEGROUND|h[BGL]|h %s "  
+  CHAT_INSTANCE_CHAT_GET = "|Hchannel:BATTLEGROUND|h[BG]|h %s "
+  CHAT_INSTANCE_CHAT_LEADER_GET = "|Hchannel:BATTLEGROUND|h[BGL]|h %s "  
   CHAT_FLAG_AFK = "[AFK] "
   CHAT_FLAG_DND = "[DND] "
   CHAT_FLAG_GM = "[GM] "
