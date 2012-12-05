@@ -1,0 +1,15 @@
+﻿## Interface: 50100
+## Title: UniquePets
+## Title-zhCN: 独特宠物统计
+## Title-zhTW: 獨特戰寵統計
+## Notes: Show the number of unique pets possessed in pet journal.
+## Notes-zhCN: 在宠物手册中显示独特宠物数量.
+## Notes-zhTW: 在戰寵手冊中顯示獨特寵物數量.
+## Author: nullberri, icrow
+## Dependencies: Blizzard_PetJournal
+
+LibPetJournal-2.0\LibStub.lua
+LibPetJournal-2.0\CallbackHandler-1.0.lua
+LibPetJournal-2.0\LibPetJournal-2.0.lua
+
+core.lua
