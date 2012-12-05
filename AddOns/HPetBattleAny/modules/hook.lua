@@ -100,37 +100,6 @@ hookfunction.PetBattleUnitTooltip_UpdateForUnit = function(self, petOwner, petIn
 		end
 	end
 end
---------------------		UnitFrame上色
-hookfunction.PetBattleUnitFrame_UpdateDisplay=function(self)
-	if self.petOwner and self.petIndex and self.petIndex <= C_PetBattles.GetNumPets(self.petOwner)  then
-		local rarity = C_PetBattles.GetBreedQuality(self.petOwner,self.petIndex)
-		local r,g,b = GetItemQualityColor(rarity-1)
-		if (self.Border) then
-			if (ENABLE_COLORBLIND_MODE == "1") then
-				self.Name:SetText(self.Name:GetText().." (".._G["BATTLE_PET_BREED_QUALITY"..rarity]..")");
-			end
-		end
-
-		if self.Name then
-			self.Name:SetVertexColor(r, g, b);
-		end
-
-		if self.Icon then
-			if not self.glow then
-				self.glow = self:CreateTexture(nil, 'ARTWORK', nil, 2)
-				self.glow:SetTexture('Interface\\Buttons\\CheckButtonHilight')
-				self.glow:SetSize(self.Icon:GetWidth(), self.Icon:GetHeight())
-				self.glow:SetPoint('CENTER', self.Icon)
-				self.glow:SetBlendMode('ADD')
-				self.glow:SetAlpha(1)
-			end
-			self.glow:SetVertexColor(r,g,b)
-			if not self.BorderAlive and not HPetSaves.HighGlow then
-				self.glow:Hide()
-			end
-		end
-	end
-end
 
 ----- 宠物对战的时候，鼠标放置技能上面。tooltip固定到了右下角。但是放在被动上面却依附在鼠标附近。这应该算是个bug，所以我hook这一段，进行了一点点修改
 hookfunction.PetBattleAbilityButton_OnEnter= function(self)
