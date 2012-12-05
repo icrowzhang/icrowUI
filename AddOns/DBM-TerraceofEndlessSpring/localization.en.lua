@@ -5,6 +5,10 @@ local L
 ------------
 L= DBM:GetModLocalization(683)
 
+L:SetWarningLocalization({
+	specWarnDDL 	= ">> Next You Interrupt!<<"
+})
+
 L:SetOptionLocalization({
 	RangeFrame			= "Show range frame (8) for $spell:111850\n(Shows everyone if you have debuff, only players with debuff if not)",
 	SetIconOnPrison		= DBM_CORE_AUTO_ICONS_OPTION_TEXT:format(117436),
@@ -52,7 +56,8 @@ L:SetTimerLocalization({
 L:SetOptionLocalization({
 	warnHideOver			= "Show warning when $spell:123244 has ended",
 	timerSpecialCD			= "Show timer for when next special ability will be cast.",
-	SoundWOP 				= "voice warning: important skills"
+	SoundWOP 				= "voice warning: important skills",
+	SetIconOnGuard		= "Set icons on $journal:6224"
 })
 
 L:SetMiscLocalization{

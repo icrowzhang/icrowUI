@@ -2,9 +2,8 @@
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
 local sndJR	= mod:NewSound(nil, "SoundJR", true)
-local LibRange = LibStub("LibRangeCheck-2.0")
 
-mod:SetRevision(("$Revision: 8051 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8192 $"):sub(12, -3))
 mod:SetCreatureID(62397)
 mod:SetModelID(42645)
 mod:SetZone()
@@ -23,6 +22,10 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START",
 	"SPELL_DAMAGE",
 	"SPELL_MISSED",
+	"SPELL_AURA_APPLIED_DOSE",
+	"SPELL_AURA_REMOVED_DOSE",
+	"SPELL_PERIODIC_DAMAGE",
+	"SPELL_PERIODIC_MISSED",
 	"RAID_BOSS_EMOTE",
 	"UNIT_DIED",
 	"UNIT_SPELLCAST_SUCCEEDED",
@@ -55,11 +58,13 @@ local yellCorrosiveResin				= mod:NewYell(122064, nil, false)
 local specWarnCorrosiveResinPool		= mod:NewSpecialWarningMove(122125)
 local specWarnMending					= mod:NewSpecialWarningInterrupt(122193)--Whoever is doing this or feels responsible should turn it on.
 local specWarnQuickening				= mod:NewSpecialWarningSpell(122149, false)--^^
-local specWarnQuickeningDispel			= mod:NewSpecialWarningSpell(122149, isDispeller)
+local specWarnQuickeningX				= mod:NewSpecialWarning("specWarnQuickeningX")
+local specWarnBH						= mod:NewSpecialWarning("specWarnBH")
 local specWarnKorthikStrike				= mod:NewSpecialWarningYou(123963)
 local specWarnKorthikStrikeOther		= mod:NewSpecialWarningTarget(123963, mod:IsHealer())
 local yellKorthikStrike					= mod:NewYell(123963)
 local specWarnWindBomb					= mod:NewSpecialWarningMove(131830)
+local specWarnWhirlingBladeMove			= mod:NewSpecialWarningMove(121898)
 local yellWindBomb						= mod:NewYell(131830)
 
 local timerWhirlingBladeCD				= mod:NewNextTimer(45.5, 121896)
@@ -76,11 +81,11 @@ local timerWindBombCD					= mod:NewCDTimer(6, 131830)--^^
 
 local berserkTimer						= mod:NewBerserkTimer(480)
 
-mod:AddBoolOption("SoundDQ", mod:IsDps() and isDispeller, "sound")
 mod:AddBoolOption("AmberPrisonIcons", true)
 mod:AddBoolOption("NearAP", true, "sound")
 mod:AddBoolOption("ReapetAP", true, "sound")
 mod:AddBoolOption("RangeFrame", true, "sound")
+mod:AddBoolOption("InfoFrame", not mod:IsDps(), "sound")
 
 local apnear = 20
 local addsCount = 0
@@ -89,6 +94,9 @@ local strikeTarget = GetSpellInfo(123963)
 local strikeWarned = false
 local amberPrisonTargets = {}
 local ptwo = false
+
+local qscount = 0
+local cfcount = 0
 
 local windBombTargets = {}
 local guids = {}
@@ -101,7 +109,10 @@ local function buildGuidTable()
 end
 
 mod:AddBoolOption("HudMAP", true, "sound")
-mod:AddDropdownOption("optHud", {"auto", "always", "none"}, "auto", "sound")
+
+mod:AddDropdownOption("optQS", {"noQS", "QS1", "QS2", "QS3", "allQS"}, "allQS", "sound")
+
+mod:AddDropdownOption("optBH", {"noBH", "BH1", "BH2", "BH3", "BH4", "allBH"}, "noBH", "sound")
 
 local DBMHudMap = DBMHudMap
 local free = DBMHudMap.free
@@ -110,8 +121,6 @@ local function register(e)
 	return e
 end
 local AmberPrisonMarkerscast = {}
-local AmberPrisonMarkers = {}
-local windBombTargetsMarkers = {}
 local windBombTargets = {}
 
 local function warnAmberPrisonTargets()
@@ -134,6 +143,8 @@ end
 
 function mod:OnCombatStart(delay)
 	addsCount = 0
+	qscount = 0
+	cfcount = 0
 	amberPrisonIcon = 2
 	strikeWarned = false
 	ptwo = false
@@ -141,29 +152,30 @@ function mod:OnCombatStart(delay)
 	table.wipe(windBombTargets)
 	timerWhirlingBladeCD:Start(35.5-delay)
 	timerRainOfBladesCD:Start(60-delay)
-	berserkTimer:Start(-delay)
+	timerKorthikStrikeCD:Start(19-delay)
+	if not self:IsDifficulty("lfr25") then
+		berserkTimer:Start(-delay)
+	end
 	if mod:IsHealer() then
 		sndWOP:Schedule(57, "Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
 		sndWOP:Schedule(58, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
 		sndWOP:Schedule(59, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
 	end
 	table.wipe(AmberPrisonMarkerscast)
-	table.wipe(AmberPrisonMarkers)
-	table.wipe(windBombTargetsMarkers)
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Show(3)
-	end
-	if self.Options.HudMAP or (self.Options.optHud == "auto") or (self.Options.optHud == "always") then
-		DBMHudMap:Toggle(true)
 	end
 end
 
 function mod:OnCombatEnd()
-	if self.Options.HudMAP or (self.Options.optHud == "auto") or (self.Options.optHud == "always") then
+	if self.Options.HudMAP then
 		DBMHudMap:FreeEncounterMarkers()
 	end
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
+	end
+	if self.Options.InfoFrame then
+		DBM.InfoFrame:Hide()
 	end
 end
 
@@ -224,7 +236,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 	elseif args:IsSpellID(122064) then
 		warnCorrosiveResin:Show(args.destName)
-		if args:IsPlayer() then
+		if args:IsPlayer() and self:AntiSpam(3, 7) then
 			specWarnCorrosiveResin:Show()
 			yellCorrosiveResin:Yell()
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\keepmove.mp3")--保持移動
@@ -238,14 +250,41 @@ function mod:SPELL_AURA_APPLIED(args)
 		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_lumang.mp3") --魯莽
 		timerRecklessness:Start()
 		timerReinforcementsCD:Start(50, addsCount)--We count them cause some groups may elect to kill a 2nd group of adds and start a second bar to form before first ends.
-	elseif args:IsSpellID(122149) and self:AntiSpam(2, 6) then
-		if isDispeller and self.Options.SoundDQ then
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\dispelnow.mp3") --快驅散
-			specWarnQuickeningDispel:Show()
+	elseif args:IsSpellID(122149) then
+		if self:AntiSpam(2, 6) then
+			qscount = qscount + 1
+			if ((mod.Options.optQS == "QS1") and (qscount % 3 == 1)) or ((mod.Options.optQS == "QS2") and (qscount % 3 == 2)) or ((mod.Options.optQS == "QS3") and (qscount % 3 == 0)) or (mod.Options.optQS == "allQS") then
+				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\dispelnow.mp3") --快驅散
+				specWarnQuickeningX:Show(args.spellName)
+			end
+		end
+		if args:GetDestCreatureID() == 62397 then
+			if mod.Options.InfoFrame then
+				DBM.InfoFrame:SetHeader(GetSpellInfo(122149))
+				DBM.InfoFrame:Show(1, "other", args.amount or 1, args.destName)
+			end
 		end
 	end
 end
-mod.SPELL_AURA_REFRESH = mod.SPELL_AURA_APPLIED
+
+mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
+
+function mod:SPELL_AURA_REFRESH(args)
+	if args:IsSpellID(122224) and args.sourceName == UnitName("player") then
+		warnImpalingSpear:Cancel()
+		warnImpalingSpear:Schedule(30)
+		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_kzjs.mp3")
+		sndWOP:Schedule(30, "Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_kzjs.mp3") --控制即將結束	
+		timerImpalingSpear:Start(args.destName)
+	elseif args:IsSpellID(125873) then
+		addsCount = addsCount + 1
+		warnRecklessness:Show(args.destName)
+		specWarnRecklessness:Show(args.destName)
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_lumang.mp3") --魯莽
+		timerRecklessness:Start()
+		timerReinforcementsCD:Start(50, addsCount)--We count them cause some groups may elect to kill a 2nd group of adds and start a second bar to form before first ends.
+	end
+end
 
 function mod:SPELL_AURA_REMOVED(args)
 	if args:IsSpellID(122224) and args.sourceName == UnitName("player") then
@@ -254,6 +293,13 @@ function mod:SPELL_AURA_REMOVED(args)
 		timerImpalingSpear:Cancel(args.destName)
 	elseif args:IsSpellID(121885) and self.Options.AmberPrisonIcons then--Not a mistake, 121885 is frozon spellid
 		self:SetIcon(args.destName, 0)
+	elseif args:IsSpellID(122149) then
+		if args:GetDestCreatureID() == 62397 then
+			if mod.Options.InfoFrame then
+				DBM.InfoFrame:SetHeader(GetSpellInfo(122149))
+				DBM.InfoFrame:Show(1, "other", 0, args.destName)
+			end
+		end
 	end
 end
 
@@ -261,9 +307,13 @@ function mod:SPELL_CAST_START(args)
 	if args:IsSpellID(122406) then
 		warnRainOfBlades:Show()
 		specWarnRainOfBlades:Show()
+		if not ptwo then
+			timerRainOfBladesCD:Start()
+		else
+			timerRainOfBladesCD:Start(49)
+		end
 		if mod:IsHealer() then
 			if not ptwo then
-				timerRainOfBladesCD:Start()
 				sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
 				sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
 				sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
@@ -272,7 +322,6 @@ function mod:SPELL_CAST_START(args)
 				sndWOP:Schedule(59, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
 				sndWOP:Schedule(60, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
 			else
-				timerRainOfBladesCD:Start(49)
 				sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
 				sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
 				sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
@@ -290,11 +339,11 @@ function mod:SPELL_CAST_START(args)
 		timerCorrosiveResinCD:Start(36, args.sourceGUID)
 	elseif args:IsSpellID(122193) then
 		warnMending:Show()
+		timerMendingCD:Start(36, args.sourceGUID)
 		if args.sourceGUID == UnitGUID("target") or args.sourceGUID == UnitGUID("focus") then
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\kickcast.mp3")--快打斷
 			specWarnMending:Show(args.sourceName)
 		end
-		timerMendingCD:Start(36, args.sourceGUID)
 	elseif args:IsSpellID(122149) then
 		warnQuickening:Show()
 		specWarnQuickening:Show(args.sourceName)
@@ -307,16 +356,7 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
 		windBombTargets[#windBombTargets + 1] = destName
 		self:Unschedule(warnWindBombTargets)
 		self:Schedule(0.3, warnWindBombTargets)
-		if ((self.Options.optHud == "auto") or (self.Options.optHud == "always")) and (not self:IsDifficulty("lfr25")) then
-			windBombTargetsMarkers[destName] = register(DBMHudMap:PlaceStaticMarkerOnPartyMember("fatring", destName, 7, nil, 1, 1, 1, 0.5):Appear():RegisterForAlerts())
-		end
 		if destGUID == UnitGUID("player") and self:AntiSpam(3, 4) then
-			if self.Options.optHud == "auto" then
-				DBMHudMap:Toggle(true)
-				self:Schedule(4, function()
-					DBMHudMap:Toggle(false)
-				end)
-			end
 			specWarnWindBomb:Show()
 			yellWindBomb:Yell()
 			DBM.Flash:Show(1, 0, 0)
@@ -325,9 +365,14 @@ function mod:SPELL_DAMAGE(_, _, _, _, destGUID, destName, _, _, spellId)
 	elseif spellId == 122125 and destGUID == UnitGUID("player") and self:AntiSpam(3, 5) then
 		specWarnCorrosiveResinPool:Show()
 		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runaway.mp3")--快躲開
+	elseif spellId == 121898 and destGUID == UnitGUID("player") and not self:IsDifficulty("lfr25") and self:AntiSpam(3, 10) then
+		specWarnWhirlingBladeMove:Show()
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runaway.mp3")--快躲開
 	end
 end
 mod.SPELL_MISSED = mod.SPELL_DAMAGE
+mod.SPELL_PERIODIC_DAMAGE = mod.SPELL_DAMAGE
+mod.SPELL_PERIODIC_MISSED = mod.SPELL_DAMAGE
 
 function mod:RAID_BOSS_EMOTE(msg)
 	if msg == L.Reinforcements or msg:find(L.Reinforcements) then
@@ -362,11 +407,6 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	elseif spellId == 131813 and self:AntiSpam(2, 3) then
 		if not ptwo then
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ptwo.mp3")--P2
-			if self.Options.optHud ~= "always" then
-				DBMHudMap:Toggle(false)
-			else
-				DBMHudMap:Toggle(true)
-			end
 		end
 		ptwo = true
 	end
@@ -375,7 +415,7 @@ end
 function mod:UNIT_AURA(uId)
 	if uId ~= "player" then return end
 	if UnitDebuff("player", strikeTarget) and not strikeWarned then--Warn you that you have a meteor
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runaway.mp3")--快躲開
+		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\holdit.mp3")--自保技能
 		DBM.Flash:Show(1, 0, 0)
 		specWarnKorthikStrike:Show()
 		yellKorthikStrike:Yell()
@@ -393,9 +433,21 @@ function mod:OnSync(msg, guid)
 		guidTableBuilt = true
 	end
 	if msg == "KorthikStrikeTarget" and guids[guid] then
-		warnKorthikStrike:Show(guids[guid])
-		if guid ~= UnitGUID("player") then--make sure YOU aren't target before warning "other"
-			specWarnKorthikStrikeOther:Show(guids[guid])
+		cfcount = cfcount + 1
+		if ((mod.Options.optBH == "BH1") and (cfcount % 4 == 1)) or ((mod.Options.optBH == "BH2") and (cfcount % 4 == 2)) or ((mod.Options.optBH == "BH3") and (cfcount % 4 == 3)) or ((mod.Options.optBH == "BH4") and (cfcount % 4 == 0)) then
+			if guid ~= UnitGUID("player") then--make sure YOU aren't target before warning "other"
+				specWarnBH:Show(guids[guid])
+				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_kgbh.mp3") --快給保護
+			end
+			self:SendSync("BHnow", UnitName("player"))
 		end
+		if mod.Options.optBH == "allBH" then
+			if guid ~= UnitGUID("player") then--make sure YOU aren't target before warning "other"
+				specWarnKorthikStrikeOther:Show(guids[guid])
+			end
+		end
+		warnKorthikStrike:Show(guids[guid])
+	elseif msg == "BHnow" and guid then
+		print("本輪保護: <"..guid..">")
 	end
 end

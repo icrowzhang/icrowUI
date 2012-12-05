@@ -1,8 +1,9 @@
 ﻿local mod	= DBM:NewMod(743, "DBM-HeartofFear", nil, 330)
 local L		= mod:GetLocalizedStrings()
 local sndWOP	= mod:NewSound(nil, "SoundWOP", true)
+local sndYB		= mod:NewSound(nil, "SoundYB", true)
 
-mod:SetRevision(("$Revision: 8065 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 8137 $"):sub(12, -3))
 mod:SetCreatureID(62837)--62847 Dissonance Field, 63591 Kor'thik Reaver, 63589 Set'thik Windblade
 mod:SetModelID(42730)
 mod:SetZone()
@@ -17,6 +18,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS",
 	"SPELL_CAST_START",
 	"CHAT_MSG_MONSTER_YELL",
+	"SPELL_DAMAGE",
+	"SPELL_MISSED",
 	"UNIT_SPELLCAST_SUCCEEDED"
 )
 
@@ -25,7 +28,7 @@ local warnCryOfTerror			= mod:NewTargetAnnounce(123788, 3, nil, mod:IsHealer())
 local warnEyes					= mod:NewStackAnnounce(123707, 2, nil, mod:IsTank())
 local warnSonicDischarge		= mod:NewSoonAnnounce(123504, 4)--Iffy reliability but better then nothing i suppose.
 local warnRetreat				= mod:NewSpellAnnounce(125098, 4)
-local warnAmberTrap				= mod:NewSpellAnnounce(125826, 3)--Trap ready
+local warnAmberTrap				= mod:NewAnnounce("warnAmberTrap", 2, 125826)
 local warnTrapped				= mod:NewTargetAnnounce(125822, 1)--Trap used
 local warnStickyResin			= mod:NewTargetAnnounce(124097, 3)
 local warnFixate				= mod:NewTargetAnnounce(125390, 3, nil, false)--Spammy
@@ -48,7 +51,7 @@ local specWarnDispatch			= mod:NewSpecialWarningInterrupt(124077, mod:IsMelee())
 local specWarnAdvance			= mod:NewSpecialWarningSpell(125304)
 local specwarnVisions			= mod:NewSpecialWarningYou(124862)
 local specwarnXJ				= mod:NewSpecialWarningMove(123184)
-local yellVisions				= mod:NewYell(124862)
+local yellVisions				= mod:NewYell(124862, nil, false)
 local specWarnConsumingTerror	= mod:NewSpecialWarningSpell(124849, not mod:IsTank())
 
 local timerScreechCD			= mod:NewNextTimer(7, 123735, nil, mod:IsRanged())
@@ -62,17 +65,34 @@ local timerCalamityCD			= mod:NewCDTimer(6, 124845, nil, mod:IsHealer())
 local timerVisionsCD			= mod:NewCDTimer(19.5, 124862)
 local timerConsumingTerrorCD	= mod:NewCDTimer(32, 124849, nil, not mod:IsTank())
 
+local berserkTimer				= mod:NewBerserkTimer(900)
+
+local timerQJ					= mod:NewTargetTimer(120, 124821)
+local timerDQ					= mod:NewBuffFadesTimer(30, 124827)
+
 mod:AddBoolOption("InfoFrame")--On by default because these do more then just melee, they interrupt spellcasting (bad for healers)
+
+mod:AddBoolOption("InfoYB", true, "sound")
+
 mod:AddBoolOption("RangeFrame", mod:IsRanged())
 mod:AddBoolOption("StickyResinIcons", true)
 
-local sentLowHP = {}
 local warnedLowHP = {}
+local warnedLowHP5 = {}
+local warnedLowHP4 = {}
+local warnedLowHP3 = {}
+local warnedLowHP2 = {}
+local warnedLowHP1 = {}
 local visonsTargets = {}
 local resinIcon = 2
 local shaName = EJ_GetEncounterInfo(709)
 local phase3Started = false
 local warnedhp = false
+local hp = 100
+local warnhp = 11
+
+local ybhp = {}
+local sh = {}
 
 local function warnVisionsTargets()
 	warnVisions:Show(table.concat(visonsTargets, "<, >"))
@@ -83,6 +103,7 @@ end
 local ptwo = false
 
 mod:AddBoolOption("HudMAP", true, "sound")
+mod:AddBoolOption("HudMAP2", false, "sound")
 local DBMHudMap = DBMHudMap
 local free = DBMHudMap.free
 local function register(e)	
@@ -90,6 +111,7 @@ local function register(e)
 	return e
 end
 local DeadMarkers = {}
+local QJMarkers = {}
 
 function mod:OnCombatStart(delay)
 	phase3Started = false
@@ -97,14 +119,26 @@ function mod:OnCombatStart(delay)
 	timerScreechCD:Start(-delay)
 	timerEyesCD:Start(-delay)
 	timerPhase2:Start(-delay)
-	table.wipe(sentLowHP)
 	table.wipe(warnedLowHP)
+	table.wipe(warnedLowHP5)
+	table.wipe(warnedLowHP4)
+	table.wipe(warnedLowHP3)
+	table.wipe(warnedLowHP2)
+	table.wipe(warnedLowHP1)
+	table.wipe(ybhp)
 	table.wipe(visonsTargets)
 	table.wipe(DeadMarkers)
+	table.wipe(QJMarkers)
 	ptwo = false
 	warnedhp = false
+	hp = 100
+	hp1 = 100
+	hp2 = 100
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Show(5)
+	end
+	if not self:IsDifficulty("lfr25") then
+		berserkTimer:Start(-delay)
 	end
 	self:RegisterShortTermEvents(
 		"UNIT_HEALTH_FREQUENT_UNFILTERED"
@@ -118,6 +152,9 @@ function mod:OnCombatEnd()
 	end
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
+	end
+	if self.Options.HudMAP or self.Options.HudMAP2 then
+		DBMHudMap:FreeEncounterMarkers()
 	end
 end
 
@@ -146,6 +183,8 @@ function mod:SPELL_AURA_APPLIED(args)
 			specwarnCryOfTerror:Show()
 			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_kjyy.mp3") --快進音域
 		end
+	elseif args:IsSpellID(124748) then
+		warnAmberTrap:Show(args.amount or 1)
 	elseif args:IsSpellID(125822) then
 		warnTrapped:Show(args.destName)
 	elseif args:IsSpellID(125390) then
@@ -164,6 +203,9 @@ function mod:SPELL_AURA_APPLIED(args)
 			sndWOP:Schedule(1.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
 			sndWOP:Schedule(2.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
 			sndWOP:Schedule(3.5, "Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
+		end
+		if mod:IsHealer() then
+			sndWOP:Schedule(4, "Interface\\AddOns\\DBM-Core\\extrasounds\\dispelnow.mp3")
 		end
 		self:Unschedule(warnVisionsTargets)
 		self:Schedule(0.3, warnVisionsTargets)
@@ -193,6 +235,20 @@ function mod:SPELL_AURA_APPLIED(args)
 				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\runaway.mp3") --快躲開
 			end
 		end
+	elseif args:IsSpellID(124821) then
+		timerQJ:Start(120, args.destName)
+		if self.Options.HudMAP2 then
+			QJMarkers[args.destName] = register(DBMHudMap:PlaceRangeMarkerOnPartyMember("timer", args.destName, 2, nil, 0, 1, 0, 1):Appear():RegisterForAlerts():Rotate(360, 120))
+		end
+	elseif args:IsSpellID(124827) then
+		if args:IsPlayer() then
+			timerDQ:Start()
+		end
+	elseif args:IsSpellID(124077) then
+		if args.sourceGUID == UnitGUID("target") then--Only show warning for your own target.
+			specWarnDispatch:Show(args.sourceName)
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\kickcast.mp3")--快打斷
+		end
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -216,6 +272,15 @@ function mod:SPELL_AURA_REMOVED(args)
 		if DeadMarkers[args.destName] then
 			DeadMarkers[args.destName] = free(DeadMarkers[args.destName])
 		end
+	elseif args:IsSpellID(124821) then
+		timerQJ:Cancel(args.destName)
+		if QJMarkers[args.destName] then
+			QJMarkers[args.destName] = free(QJMarkers[args.destName])
+		end
+	elseif args:IsSpellID(124827) then
+		if args:IsPlayer() then
+			timerDQ:Cancel()
+		end
 	end
 end
 
@@ -224,7 +289,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 		warnScreech:Show()
 		timerScreechCD:Start()
 	elseif args:IsSpellID(125826) then
-		warnAmberTrap:Show()
 		specwarnAmberTrap:Show()
 		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_xjwc.mp3") --陷阱完成
 	elseif args:IsSpellID(124845) then
@@ -236,6 +300,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif args:IsSpellID(125451) and not phase3Started then
 		phase3Started = true
 		self:UnregisterShortTermEvents()
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Hide()
+		end
 		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\ptwo.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
@@ -253,12 +320,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 end
 
 function mod:SPELL_CAST_START(args)
-	if args:IsSpellID(124077) then
-		if args.sourceGUID == UnitGUID("target") then--Only show warning for your own target.
-			specWarnDispatch:Show(args.sourceName)
-			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\kickcast.mp3")--快打斷
-		end
-	elseif args:IsSpellID(124849) then
+	if args:IsSpellID(124849) then
 		warnConsumingTerror:Show()
 		specWarnConsumingTerror:Show()
 		timerConsumingTerrorCD:Start()
@@ -277,6 +339,9 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if (msg == L.YellPhase3 or msg:find(L.YellPhase3)) and not phase3Started then
 		phase3Started = true
 		self:UnregisterShortTermEvents()
+		if self.Options.RangeFrame then
+			DBM.RangeCheck:Hide()
+		end
 		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\ptwo.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
 		sndWOP:Cancel("Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
@@ -351,15 +416,22 @@ end
 function mod:UNIT_HEALTH_FREQUENT_UNFILTERED(uId)
 	local cid = self:GetUnitCreatureId(uId)
 	local guid = UnitGUID(uId)
-	if cid == 62847 and UnitHealth(uId) / UnitHealthMax(uId) <= 0.08 and not sentLowHP[guid] then
-		sentLowHP[guid] = true
-		self:SendSync("lowhealth", guid)
-	end	
+	if cid == 62847 then
+		hp = UnitHealth(uId)
+		self:SendSync("ybhealth", guid, hp)
+	end
 	if uId == "player" then
 		if UnitDebuff("player", GetSpellInfo(123184)) then
-			if UnitHealth(uId) / UnitHealthMax(uId) <= 0.5 and not warnedhp then
-				sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\checkhp.mp3")--注意血量
-				warnedhp = true
+			if self:IsDifficulty("heroic10", "heroic25") then
+				if UnitHealth(uId) / UnitHealthMax(uId) <= 0.8 and not warnedhp then
+					sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\checkhp.mp3")--注意血量
+					warnedhp = true
+				end
+			else
+				if UnitHealth(uId) / UnitHealthMax(uId) <= 0.5 and not warnedhp then
+					sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\checkhp.mp3")
+					warnedhp = true
+				end
 			end
 		else
 			warnedhp = false
@@ -367,11 +439,65 @@ function mod:UNIT_HEALTH_FREQUENT_UNFILTERED(uId)
 	end
 end
 
-function mod:OnSync(msg, guid)
-	if msg == "lowhealth" and guid and not warnedLowHP[guid] then
-		warnedLowHP[guid] = true
-		warnSonicDischarge:Show()--This only works if someone in raid is actually targeting them :(
-		specwarnSonicDischarge:Show()--But is extremly useful when they are.
-		sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_ybbz.mp3") --音波爆炸準備
+function mod:OnSync(msg, guid, hp)
+	if msg == "ybhealth" and guid and hp then
+		if not ybhp[guid] then ybhp[guid] = hp end
+		if ybhp[guid] > hp then ybhp[guid] = hp end
+		table.wipe(sh)
+		for k,v in pairs(ybhp) do
+			table.insert(sh,{K=k,V=v})
+		end
+		table.sort (sh,function(a,b) return a.V< b.V end)
+		if self.Options.InfoYB then
+			DBM.InfoFrame:SetHeader(GetSpellInfo(123184))
+			if #sh == 2 then
+				DBM.InfoFrame:Show(1, "other", sh[2].V, sh[1].V)
+			elseif #sh == 1 then
+				DBM.InfoFrame:Show(1, "other", "-", sh[1].V)
+			end
+		end
+		warnhp = tonumber(ybhp[guid])
+		if warnhp < 11 and not warnedLowHP[guid] then
+			warnedLowHP[guid] = true
+			warnSonicDischarge:Show()--This only works if someone in raid is actually targeting them :(
+			specwarnSonicDischarge:Show()--But is extremly useful when they are.
+			sndWOP:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\ex_mop_ybbz.mp3") --音波爆炸準備
+		end
+		if warnhp == 5  and not warnedLowHP5[guid] then
+			warnedLowHP5[guid] = true
+			sndYB:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\countfive.mp3")
+		end
+		if warnhp == 4  and not warnedLowHP4[guid] then
+			warnedLowHP4[guid] = true
+			sndYB:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\countfour.mp3")
+		end
+		if warnhp == 3  and not warnedLowHP3[guid] then
+			warnedLowHP3[guid] = true
+			sndYB:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\countthree.mp3")
+		end
+		if warnhp == 2  and not warnedLowHP2[guid] then
+			warnedLowHP2[guid] = true
+			sndYB:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\counttwo.mp3")
+		end
+		if warnhp == 1  and not warnedLowHP1[guid] then
+			warnedLowHP1[guid] = true
+			sndYB:Play("Interface\\AddOns\\DBM-Core\\extrasounds\\countone.mp3")
+		end
 	end
 end
+
+function mod:SPELL_DAMAGE(sourceGUID, _, _, _, _, _, _, _, spellId)
+	if spellId == 123504 then
+		if self.Options.InfoYB then
+			if ybhp[sourceGUID] then ybhp[sourceGUID] = nil end
+			table.wipe(sh)
+			for k,v in pairs(ybhp) do
+				table.insert(sh,{K=k,V=v})
+			end
+			if #sh == 0 then
+				DBM.InfoFrame:Hide()
+			end
+		end
+	end
+end
+mod.SPELL_MISSED = mod.SPELL_DAMAGE

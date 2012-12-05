@@ -42,15 +42,15 @@
 --    * blip_8.ogg by Corsica_S (http://www.freesound.org/usersViewSingle.php?id=7037)
 --  The full of text of the license can be found in the file "Sounds\Creative Commons Sampling Plus 1.0.txt".
 
-local UIDropDownMenu_CreateInfo = XUIDropDownMenu_CreateInfo
-local UIDropDownMenu_AddButton = XUIDropDownMenu_AddButton
-local UIDropDownMenu_Initialize = XUIDropDownMenu_Initialize
-local ToggleDropDownMenu = XToggleDropDownMenu
-
 ---------------
 --  Globals  --
 ---------------
 DBM.RangeCheck = {}
+
+local UIDropDownMenu_CreateInfo = XUIDropDownMenu_CreateInfo
+local UIDropDownMenu_AddButton = XUIDropDownMenu_AddButton
+local UIDropDownMenu_Initialize = XUIDropDownMenu_Initialize
+local ToggleDropDownMenu = XToggleDropDownMenu
 
 --------------
 --  Locals  --
@@ -386,7 +386,7 @@ function createFrame()
 		updateRate = 0.05
 	end]]
 	local frame = CreateFrame("GameTooltip", "DBMRangeCheck", UIParent, "GameTooltipTemplate")
-	dropdownFrame = CreateFrame("Frame", "DBMRangeCheckDropdown", frame, "XUIDropDownMenuTemplate")
+	dropdownFrame = CreateFrame("Frame", "DBMRangeCheckDropdown", frame, "UIDropDownMenuTemplate")
 	frame:SetFrameStrata("DIALOG")
 	frame:SetPoint(DBM.Options.RangeFramePoint, UIParent, DBM.Options.RangeFramePoint, DBM.Options.RangeFrameX, DBM.Options.RangeFrameY)
 	frame:SetHeight(64)
