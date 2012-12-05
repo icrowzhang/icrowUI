@@ -1,4 +1,4 @@
-﻿## Interface: 50001
+﻿## Interface: 50100
 ## Title: tullaRange Config
 ## Title-zhCN: 动作条按钮染色 |cff69ccf0选项|r
 ## Title-zhTW: 動作條按鈕染色 |cff69ccf0選項|r
