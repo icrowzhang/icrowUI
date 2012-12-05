@@ -155,23 +155,23 @@ rd:SetScript("OnEvent", function()
 	local difficulty = GetInstanceDifficulty()
 	local inGroup = InGuildParty()
 	
-	if difficulty == 2 then
+	if difficulty == DIFFICULTY_DUNGEON_NORMAL then
 		rdt:SetText("5")
-	elseif difficulty == 3 then
+	elseif difficulty == DIFFICULTY_DUNGEON_HEROIC then
 		rdt:SetText("5H")
-	elseif difficulty == 4 then
+	elseif difficulty == DIFFICULTY_RAID10_NORMAL then
 		rdt:SetText("10")
-	elseif difficulty == 5 then
+	elseif difficulty == DIFFICULTY_RAID25_NORMAL then
 		rdt:SetText("25")
-	elseif difficulty == 6 then
+	elseif difficulty == DIFFICULTY_RAID10_HEROIC then
 		rdt:SetText("10H")
-	elseif difficulty == 7 then
+	elseif difficulty == DIFFICULTY_RAID25_HEROIC then
 		rdt:SetText("25H")
-	elseif difficulty == 8 then
+	elseif difficulty == DIFFICULTY_RAID_LFR then
 		rdt:SetText("LFR")
-	elseif difficulty == 9 then
+	elseif difficulty == DIFFICULTY_DUNGEON_CHALLENGE then
 		rdt:SetText("5C")
-	elseif difficulty == 10 then
+	elseif difficulty == DIFFICULTY_RAID40 then
 		rdt:SetText("40")
 	else
 		rdt:SetText("")
