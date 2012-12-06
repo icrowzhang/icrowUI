@@ -102,7 +102,7 @@ F.CreateSD = function(parent, size, r, g, b, alpha, offset)
 end
 
 F.CreateGradient = function(f)
-	local tex = f:CreateTexture(nil, "BORDER")
+	local tex = f:CreateTexture(nil, "BACKGROUND")
 	tex:SetPoint("TOPLEFT")
 	tex:SetPoint("BOTTOMRIGHT")
 	tex:SetTexture(C.media.backdrop)
@@ -6435,12 +6435,12 @@ Skin:SetScript("OnEvent", function(self, event, addon)
 			F.CreateBG(bu.icon)
 		end
 
-		hooksecurefunc("PetJournal_UpdatePetCard", function(self)
+--[[		hooksecurefunc("PetJournal_UpdatePetCard", function(self)
 			local r, g, b = self.PetInfo.qualityBorder:GetVertexColor()
 			if r == 1 and g == 1 then r, g, b = 0, 0, 0 end
 
 			self.PetInfo.icon.bg:SetVertexColor(r, g, b)
-		end)
+		end)]]
 
 		for i = 1, 3 do
 			local bu = PetJournal.Loadout["Pet"..i]
@@ -6503,7 +6503,7 @@ Skin:SetScript("OnEvent", function(self, event, addon)
 			end
 		end
 
-		hooksecurefunc("PetJournal_UpdatePetLoadOut", function()
+--[[		hooksecurefunc("PetJournal_UpdatePetLoadOut", function()
 			for i = 1, 3 do
 				local bu = PetJournal.Loadout["Pet"..i]
 				bu.icon.bg:SetShown(not bu.helpFrame:IsShown())
@@ -6515,7 +6515,7 @@ Skin:SetScript("OnEvent", function(self, event, addon)
 
 				bu.dragButton:SetEnabled(not bu.helpFrame:IsShown())
 			end
-		end)
+		end)]]
 
 		PetJournal.SpellSelect.BgEnd:Hide()
 		PetJournal.SpellSelect.BgTiled:Hide()
@@ -6564,7 +6564,7 @@ Skin:SetScript("OnEvent", function(self, event, addon)
 		
 		local function Hooked_PetJournal_UpdatePetCard()
 			if PetJournalPetCard.petID then
-				local _, customName, _, _, _, _, name, _, _, _, _, _, _, canBattle, _ = C_PetJournal.GetPetInfoByPetID(PetJournalPetCard.petID)
+				local _, customName, _, _, _, _, _, name, _, _, _, _, _, _, canBattle, _ = C_PetJournal.GetPetInfoByPetID(PetJournalPetCard.petID)
 				if canBattle then
 					local rarity = select(5, C_PetJournal.GetPetStats(PetJournalPetCard.petID))
 					PetJournalPetCard.QualityFrame.quality:SetText(_G["BATTLE_PET_BREED_QUALITY"..rarity])
@@ -6590,9 +6590,9 @@ Skin:SetScript("OnEvent", function(self, event, addon)
 		local function Hooked_PetJournal_UpdatePetLoadOut()
 			for i=1, 3 do
 				local Pet = PetJournal.Loadout["Pet"..i]
-				local petID, _, _, _, locked =  C_PetJournal.GetPetLoadOutInfo(i)
-				if not locked and petID > 0 then
-					local _, customName, _, _, _, _, name = C_PetJournal.GetPetInfoByPetID(petID)
+				local petID, _, _, _, locked = C_PetJournal.GetPetLoadOutInfo(i)
+				if not locked and petID then
+					local _, customName, _, _, _, _, _, name = C_PetJournal.GetPetInfoByPetID(petID)
 					local rarity = select(5, C_PetJournal.GetPetStats(petID))
 					local hex = select(4, GetItemQualityColor(rarity-1))
 					if customName then
