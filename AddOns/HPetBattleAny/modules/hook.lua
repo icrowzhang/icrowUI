@@ -126,8 +126,6 @@ hookfunction.PetJournal_UpdatePetList=function()
 	local numPets, numOwned = C_PetJournal.GetNumPets(isWild);
 	PetJournal.PetCount.Count:SetText(numOwned);
 
-	local summonedPetID = C_PetJournal.GetSummonedPetID();
-
 	for i = 1,#petButtons do
 		pet = petButtons[i];
 		index = offset + i;
