@@ -452,31 +452,6 @@ Engine.Config = {
 			spacing = 3,
 			filled = true,
 		},
-		{
-			name = "CM_IGNITE",
-			kind = "DOT",
-			spellID = 12654, -- Ignite 
-			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
-			width = 201,
-			height = 8,
-			colors = { 
-				{1, 165/255, 0, 1}, -- bad -- orange
-				{1, 1, 0, 1}, -- 0,75% -- yellow
-				{0, 1, 0, 1}, -- > 100% GO -- green
-				},
-			latency = true,
-			threshold = 20000,
-		},
-		{
-			name = "CM_COMBU",
-			kind = "DOT",
-			spellID = 83853, -- Combustion
-			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
-			width = 201,
-			height = 8,
-			color = {228/255, 225/255, 16/255, 1},
-			latency = false,
-		},
 	},
 	["DEATHKNIGHT"] = {
 		{
