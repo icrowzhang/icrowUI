@@ -152,7 +152,7 @@ rdt:SetJustifyH("RIGHT")
 rdt:SetPoint("TOPRIGHT", -1, -1)
 
 rd:SetScript("OnEvent", function()
-	local difficulty = GetInstanceDifficulty()
+	local difficulty = GetInstanceDifficulty() - 1
 	local inGroup = InGuildParty()
 	
 	if difficulty == DIFFICULTY_DUNGEON_NORMAL then
